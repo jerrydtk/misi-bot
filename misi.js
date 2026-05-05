@@ -642,17 +642,21 @@ client.on('messageCreate', (message) => {
     return message.reply(`💰 ${data.users[userId].coins}`);
   }
 
-  // 🍗 FEED
+  // 🍗 FEED - NOWA WERSJA
   if (message.content === '!feed') {
-    const cd = canUse(userId,'feed',600000);
-    if (!cd.ok) return message.reply(cd.msg);
+    if (data.pet.dead) {
+      return message.reply("❌ Misi nie żyje! Użyj `!adopt` lub `!restore`.");
+    }
 
     const before = data.pet.hunger;
-    data.pet.hunger += 15;
+    data.pet.hunger = Math.min(100, data.pet.hunger + 15);
     clampPet();
 
-    const coins = getActionCoins();
-    reward(userId, coins, 5, message);
+    const coins = Math.floor(Math.random() * 5) + 3;
+    data.users[userId].coins += coins;
+    data.users[userId].xp += 5;
+
+    safeSave();
 
     return message.reply({
       embeds: [
@@ -665,20 +669,24 @@ client.on('messageCreate', (message) => {
     });
   }
 
-  // 🎾 PLAY
+  // 🎾 PLAY - NOWA WERSJA
   if (message.content === '!play') {
-    const cd = canUse(userId,'play',300000);
-    if (!cd.ok) return message.reply(cd.msg);
+    if (data.pet.dead) {
+      return message.reply("❌ Misi nie żyje! Użyj `!adopt` lub `!restore`.");
+    }
 
     const before = data.pet.happiness;
-    data.pet.happiness += 10;
+    data.pet.happiness = Math.min(100, data.pet.happiness + 10);
     data.pet.happinessLossSincePlay = 0;
     data.pet.lastPlayAt = Date.now();
     clampPet();
 
-    const coins = getActionCoins();
-    const bonus = getLuckyBonus();
-    reward(userId, coins + bonus, 5, message);
+    const coins = Math.floor(Math.random() * 8) + 5;
+    const bonus = Math.random() < 0.2 ? Math.floor(Math.random() * 5) + 2 : 0;
+    data.users[userId].coins += coins + bonus;
+    data.users[userId].xp += 5;
+
+    safeSave();
 
     return message.reply({
       embeds: [
@@ -691,18 +699,22 @@ client.on('messageCreate', (message) => {
     });
   }
 
-  // 🧼 CLEAN
+  // 🧼 CLEAN - NOWA WERSJA
   if (message.content === '!clean') {
-    const cd = canUse(userId,'clean',600000);
-    if (!cd.ok) return message.reply(cd.msg);
+    if (data.pet.dead) {
+      return message.reply("❌ Misi nie żyje! Użyj `!adopt` lub `!restore`.");
+    }
 
     const before = data.pet.cleanliness;
-    data.pet.cleanliness += 10;
+    data.pet.cleanliness = Math.min(100, data.pet.cleanliness + 10);
     clampPet();
 
-    const coins = getActionCoins();
-    const bonus = getLuckyBonus();
-    reward(userId, coins + bonus, 5, message);
+    const coins = Math.floor(Math.random() * 6) + 4;
+    const bonus = Math.random() < 0.15 ? Math.floor(Math.random() * 4) + 1 : 0;
+    data.users[userId].coins += coins + bonus;
+    data.users[userId].xp += 5;
+
+    safeSave();
 
     return message.reply({
       embeds: [
@@ -715,22 +727,26 @@ client.on('messageCreate', (message) => {
     });
   }
 
-  // ❤️ HEAL
+  // ❤️ HEAL - NOWA WERSJA
   if (message.content === '!heal') {
-    const cd = canUse(userId,'heal',900000);
-    if (!cd.ok) return message.reply(cd.msg);
+    if (data.pet.dead) {
+      return message.reply("❌ Misi nie żyje! Użyj `!adopt` lub `!restore`.");
+    }
 
     const before = data.pet.health;
-    data.pet.health += 15;
+    data.pet.health = Math.min(100, data.pet.health + 15);
     clampPet();
 
-    const coins = getActionCoins();
-    reward(userId, coins, 5, message);
+    const coins = Math.floor(Math.random() * 7) + 4;
+    data.users[userId].coins += coins;
+    data.users[userId].xp += 5;
+
+    safeSave();
 
     return message.reply({
       embeds: [
         new EmbedBuilder()
-          .setTitle("❤️ Uleczył(a)ś Misiego!")
+          .setTitle("❤️ Uleczył(a)ś Misia!")
           .setDescription(`**Zdrowie:** ${Math.round(before)} → ${Math.round(data.pet.health)}\n**Otrzymano:** 💰 ${coins} monet\n\n${getPetMood()}`)
           .addFields({ name: "Zdrowie", value: bar(data.pet.health), inline: false })
           .setColor(data.pet.health > 70 ? 0x00ff00 : data.pet.health > 40 ? 0xffff00 : 0xff0000)
