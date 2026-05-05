@@ -610,7 +610,13 @@ client.on('messageCreate', (message) => {
 
   // 🍗 FEED
   if (message.content === '!feed') {
+    // DEBUG: Sprawdzenie stanu
+    console.log('DEBUG: !feed called by', userId);
+    console.log('DEBUG: Misi dead?', data.pet.dead);
+    console.log('DEBUG: User cooldowns:', data.users[userId]?.cooldowns);
+    
     const cd = canUse(userId,'feed',600000);
+    console.log('DEBUG: Cooldown result:', cd);
     if (!cd.ok) return message.reply(cd.msg);
 
     const before = data.pet.hunger;
@@ -633,7 +639,13 @@ client.on('messageCreate', (message) => {
 
   // 🎾 PLAY
   if (message.content === '!play') {
+    // DEBUG: Sprawdzenie stanu
+    console.log('DEBUG: !play called by', userId);
+    console.log('DEBUG: Misi dead?', data.pet.dead);
+    console.log('DEBUG: User cooldowns:', data.users[userId]?.cooldowns);
+    
     const cd = canUse(userId,'play',300000);
+    console.log('DEBUG: Cooldown result:', cd);
     if (!cd.ok) return message.reply(cd.msg);
 
     const before = data.pet.happiness;
@@ -659,7 +671,13 @@ client.on('messageCreate', (message) => {
 
   // 🧼 CLEAN
   if (message.content === '!clean') {
+    // DEBUG: Sprawdzenie stanu
+    console.log('DEBUG: !clean called by', userId);
+    console.log('DEBUG: Misi dead?', data.pet.dead);
+    console.log('DEBUG: User cooldowns:', data.users[userId]?.cooldowns);
+    
     const cd = canUse(userId,'clean',600000);
+    console.log('DEBUG: Cooldown result:', cd);
     if (!cd.ok) return message.reply(cd.msg);
 
     const before = data.pet.cleanliness;
@@ -683,7 +701,13 @@ client.on('messageCreate', (message) => {
 
   // ❤️ HEAL
   if (message.content === '!heal') {
+    // DEBUG: Sprawdzenie stanu
+    console.log('DEBUG: !heal called by', userId);
+    console.log('DEBUG: Misi dead?', data.pet.dead);
+    console.log('DEBUG: User cooldowns:', data.users[userId]?.cooldowns);
+    
     const cd = canUse(userId,'heal',900000);
+    console.log('DEBUG: Cooldown result:', cd);
     if (!cd.ok) return message.reply(cd.msg);
 
     const before = data.pet.health;
