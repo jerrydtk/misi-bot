@@ -654,6 +654,12 @@ client.on('messageCreate', (message) => {
     if (now - lastFeed < 600000) { // 10 minut cooldown
       return message.reply("⏳ Poczekaj 10 minut przed kolejnym karmieniem!");
     }
+    
+    // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
+    setTimeout(() => {
+      message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym karmieniem Misia! 🍗`);
+    }, 3000);
+    }
 
     const before = data.pet.hunger;
     data.pet.hunger = Math.min(100, data.pet.hunger + 15);
@@ -687,6 +693,12 @@ client.on('messageCreate', (message) => {
     const lastPlay = data.users[userId].lastPlay || 0;
     if (now - lastPlay < 600000) { // 10 minut cooldown
       return message.reply("⏳ Poczekaj 10 minut przed kolejną zabawą!");
+    }
+    
+    // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
+    setTimeout(() => {
+      message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejną zabawą z Misiem! 🎾`);
+    }, 3000);
     }
 
     const before = data.pet.happiness;
@@ -728,6 +740,12 @@ client.on('messageCreate', (message) => {
     const lastClean = data.users[userId].lastClean || 0;
     if (now - lastClean < 600000) { // 10 minut cooldown
       return message.reply("⏳ Poczekaj 10 minut przed kolejnym czyszczeniem!");
+    }
+    
+    // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
+    setTimeout(() => {
+      message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym czyszczeniem Misia! 🧼`);
+    }, 3000);
     }
 
     const before = data.pet.cleanliness;
@@ -780,6 +798,12 @@ client.on('messageCreate', (message) => {
     const lastHeal = data.users[userId].lastHeal || 0;
     if (now - lastHeal < 600000) { // 10 minut cooldown
       return message.reply("⏳ Poczekaj 10 minut przed kolejnym leczeniem!");
+    }
+    
+    // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
+    setTimeout(() => {
+      message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym leczeniem Misia! ❤️`);
+    }, 3000);
     }
 
     const before = data.pet.health;
