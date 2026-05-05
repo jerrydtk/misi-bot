@@ -158,7 +158,7 @@ function petStatus() {
   const anger = Math.round(data.pet.anger);
   const religion = Math.round(data.pet.religion);
 
-  return `MIS I STATUS
+  return `MISI STATUS
 
 Glod: ${bar(hunger)} ${hunger}/100
 Szczescie: ${bar(happiness)} ${happiness}/100
@@ -291,6 +291,17 @@ function checkDeath(channel) {
         data.pet.deathDoorTime = null;
         data.pet.deathDoorReminderSent = false;
         data.pet.deathCount++;
+        
+        // Reset all user cooldowns when Misi dies
+        for (const userId in data.users) {
+          if (data.users[userId].cooldowns) {
+            data.users[userId].cooldowns = {};
+          }
+          if (data.users[userId].itemCooldowns) {
+            data.users[userId].itemCooldowns = {};
+          }
+        }
+        
         channel.send({
           embeds: [
             new EmbedBuilder()
@@ -329,6 +340,17 @@ function checkDeath(channel) {
           data.pet.dead = true;
           data.pet.deathTime = now;
           data.pet.deathCount++;
+          
+          // Reset all user cooldowns when Misi dies
+          for (const userId in data.users) {
+            if (data.users[userId].cooldowns) {
+              data.users[userId].cooldowns = {};
+            }
+            if (data.users[userId].itemCooldowns) {
+              data.users[userId].itemCooldowns = {};
+            }
+          }
+          
           channel.send("Twoj Misi zmarl. Nie umiesz dbac o Misi.");
         }
         safeSave();
@@ -447,10 +469,6 @@ client.on('messageCreate', (message) => {
 
   const userId = message.author.id;
   ensureUser(userId);
-
-  // DEBUG: Log każdej komendy
-  console.log('DEBUG: Message received:', message.content, 'from:', userId);
-  console.log('DEBUG: Misi dead?', data.pet.dead);
 
   // 🚨 EMERGENCY RESTORE (ADMIN ONLY) - PRZED blokadą śmierci!
   if (message.content === '!restore') {
@@ -626,13 +644,7 @@ client.on('messageCreate', (message) => {
 
   // 🍗 FEED
   if (message.content === '!feed') {
-    // DEBUG: Sprawdzenie stanu
-    console.log('DEBUG: !feed called by', userId);
-    console.log('DEBUG: Misi dead?', data.pet.dead);
-    console.log('DEBUG: User cooldowns:', data.users[userId]?.cooldowns);
-    
     const cd = canUse(userId,'feed',600000);
-    console.log('DEBUG: Cooldown result:', cd);
     if (!cd.ok) return message.reply(cd.msg);
 
     const before = data.pet.hunger;
@@ -655,13 +667,7 @@ client.on('messageCreate', (message) => {
 
   // 🎾 PLAY
   if (message.content === '!play') {
-    // DEBUG: Sprawdzenie stanu
-    console.log('DEBUG: !play called by', userId);
-    console.log('DEBUG: Misi dead?', data.pet.dead);
-    console.log('DEBUG: User cooldowns:', data.users[userId]?.cooldowns);
-    
     const cd = canUse(userId,'play',300000);
-    console.log('DEBUG: Cooldown result:', cd);
     if (!cd.ok) return message.reply(cd.msg);
 
     const before = data.pet.happiness;
@@ -687,13 +693,7 @@ client.on('messageCreate', (message) => {
 
   // 🧼 CLEAN
   if (message.content === '!clean') {
-    // DEBUG: Sprawdzenie stanu
-    console.log('DEBUG: !clean called by', userId);
-    console.log('DEBUG: Misi dead?', data.pet.dead);
-    console.log('DEBUG: User cooldowns:', data.users[userId]?.cooldowns);
-    
     const cd = canUse(userId,'clean',600000);
-    console.log('DEBUG: Cooldown result:', cd);
     if (!cd.ok) return message.reply(cd.msg);
 
     const before = data.pet.cleanliness;
@@ -717,13 +717,7 @@ client.on('messageCreate', (message) => {
 
   // ❤️ HEAL
   if (message.content === '!heal') {
-    // DEBUG: Sprawdzenie stanu
-    console.log('DEBUG: !heal called by', userId);
-    console.log('DEBUG: Misi dead?', data.pet.dead);
-    console.log('DEBUG: User cooldowns:', data.users[userId]?.cooldowns);
-    
     const cd = canUse(userId,'heal',900000);
-    console.log('DEBUG: Cooldown result:', cd);
     if (!cd.ok) return message.reply(cd.msg);
 
     const before = data.pet.health;
