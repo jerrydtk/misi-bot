@@ -485,6 +485,21 @@ client.on('messageCreate', (message) => {
     data.pet.anger = 0;
     data.pet.religion = 50;
     data.pet.possessed = false;
+    data.pet.happinessLossSincePlay = 0;
+    data.pet.lastPlayAt = Date.now();
+    
+    // Reset alerts
+    data.alerts = { hunger: false, happiness: false, health: false, cleanliness: false };
+    
+    // Reset all user cooldowns (emergency restore)
+    for (const userId in data.users) {
+      if (data.users[userId].cooldowns) {
+        data.users[userId].cooldowns = {};
+      }
+      if (data.users[userId].itemCooldowns) {
+        data.users[userId].itemCooldowns = {};
+      }
+    }
     
     safeSave();
 
