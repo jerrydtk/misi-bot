@@ -684,7 +684,7 @@ client.on('messageCreate', (message) => {
     embeds: [
       new EmbedBuilder()
         .setTitle("🍗 Nakarmiłeś Misia!")
-        .setDescription(`**Głód:** ${Math.round(before)} → ${Math.round(data.pet.hunger)}\n**Otrzymano:** 💰 ${feedCoins} monet${feedBonus > 0 ? ` + bonus ${feedBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
+        .setDescription(`**Głód:** ${Math.round(feedBefore)} → ${Math.round(data.pet.hunger)}\n**Otrzymano:** 💰 ${feedCoins} monet${feedBonus > 0 ? ` + bonus ${feedBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
         .addFields(
           { name: "Głód", value: bar(data.pet.hunger), inline: false },
           { name: "💰 Szansa bonusu", value: "12%", inline: true },
