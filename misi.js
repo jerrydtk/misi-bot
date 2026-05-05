@@ -200,29 +200,33 @@ function getPetMood() {
 function checkDeathDoorReminder(channel) {
   if (data.pet.dead) return;
 
-  const anyStatZero = data.pet.hunger <= 0 || data.pet.happiness <= 0 || data.pet.health <= 0 || data.pet.cleanliness <= 0;
-  const now = Date.now();
+  try {
+    const anyStatZero = data.pet.hunger <= 0 || data.pet.happiness <= 0 || data.pet.health <= 0 || data.pet.cleanliness <= 0;
+    const now = Date.now();
 
-  // Check if at death door (any stat is 0)
-  if (anyStatZero && !data.pet.deathDoorReminderSent) {
-    data.pet.deathDoorTime = now;
-    data.pet.deathDoorReminderSent = true;
-    
-    const zeroStats = [];
-    if (data.pet.hunger <= 0) zeroStats.push("Głód");
-    if (data.pet.happiness <= 0) zeroStats.push("Szczęście");
-    if (data.pet.health <= 0) zeroStats.push("Zdrowie");
-    if (data.pet.cleanliness <= 0) zeroStats.push("Czystość");
-    
-    // Send initial reminder
-    sendDeathDoorReminder(channel, zeroStats);
-    
-    safeSave();
-  } else if (!anyStatZero && data.pet.deathDoorReminderSent) {
-    // Reset reminder if stats improved
-    data.pet.deathDoorTime = null;
-    data.pet.deathDoorReminderSent = false;
-    safeSave();
+    // Check if at death door (any stat is 0)
+    if (anyStatZero && !data.pet.deathDoorReminderSent) {
+      data.pet.deathDoorTime = now;
+      data.pet.deathDoorReminderSent = true;
+      
+      const zeroStats = [];
+      if (data.pet.hunger <= 0) zeroStats.push("Głód");
+      if (data.pet.happiness <= 0) zeroStats.push("Szczęście");
+      if (data.pet.health <= 0) zeroStats.push("Zdrowie");
+      if (data.pet.cleanliness <= 0) zeroStats.push("Czystość");
+      
+      // Send initial reminder
+      sendDeathDoorReminder(channel, zeroStats);
+      
+      safeSave();
+    } else if (!anyStatZero && data.pet.deathDoorReminderSent) {
+      // Reset reminder if stats improved
+      data.pet.deathDoorTime = null;
+      data.pet.deathDoorReminderSent = false;
+      safeSave();
+    }
+  } catch (error) {
+    console.error('ERROR in death door reminder:', error);
   }
 }
 
@@ -258,45 +262,49 @@ function checkDeath(channel) {
 
   // Check death door lottery (15 minutes after reminder)
   if (data.pet.deathDoorReminderSent && data.pet.deathDoorTime && (now - data.pet.deathDoorTime >= 900000)) { // 15 minutes
-    channel.send("⏰ Czas minął! Losuję czy Misi przeżyje...");
-    
-    if (Math.random() < 0.25) { // 25% chance to survive
-      channel.send({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("🎉 MISI PRZEŻYŁ!")
-            .setDescription("Misi cudem przeżył dzięki waszej modlitwie! Statystyki zostały zresetowane do minimum.")
-            .addFields(
-              { name: "🐻 Nowy status", value: "Głód: 1, Szczęście: 1, Zdrowie: 1, Czystość: 1", inline: false }
-            )
-            .setColor(0x00ff00)
-            .setTimestamp()
-        ]
-      });
-      data.pet.hunger = 1;
-      data.pet.happiness = 1;
-      data.pet.health = 1;
-      data.pet.cleanliness = 1;
-      data.pet.deathDoorTime = null;
-      data.pet.deathDoorReminderSent = false;
-    } else {
-      // Misi dies
-      data.pet.dead = true;
-      data.pet.deathTime = now;
-      data.pet.deathDoorTime = null;
-      data.pet.deathDoorReminderSent = false;
-      data.pet.deathCount++;
-      channel.send({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("💀 MISI ZMARŁ")
-            .setDescription("Nikt nie zareagował na czas i Misi zmarł. Nie umiesz dbać o Misia.\n\nMożesz adoptować nowego Misia za 24 godzin komendą `!adopt`.")
-            .setColor(0xff0000)
-            .setTimestamp()
-        ]
-      });
+    try {
+      channel.send("⏰ Czas minął! Losuję czy Misi przeżyje...");
+      
+      if (Math.random() < 0.25) { // 25% chance to survive
+        channel.send({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle("🎉 MISI PRZEŻYŁ!")
+              .setDescription("Misi cudem przeżył dzięki waszej modlitwie! Statystyki zostały zresetowane do minimum.")
+              .addFields(
+                { name: "🐻 Nowy status", value: "Głód: 1, Szczęście: 1, Zdrowie: 1, Czystość: 1", inline: false }
+              )
+              .setColor(0x00ff00)
+              .setTimestamp()
+          ]
+        });
+        data.pet.hunger = 1;
+        data.pet.happiness = 1;
+        data.pet.health = 1;
+        data.pet.cleanliness = 1;
+        data.pet.deathDoorTime = null;
+        data.pet.deathDoorReminderSent = false;
+      } else {
+        // Misi dies
+        data.pet.dead = true;
+        data.pet.deathTime = now;
+        data.pet.deathDoorTime = null;
+        data.pet.deathDoorReminderSent = false;
+        data.pet.deathCount++;
+        channel.send({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle("💀 MISI ZMARŁ")
+              .setDescription("Nikt nie zareagował na czas i Misi zmarł. Nie umiesz dbać o Misia.\n\nMożesz adoptować nowego Misia za 24 godzin komendą `!adopt`.")
+              .setColor(0xff0000)
+              .setTimestamp()
+          ]
+        });
+      }
+      safeSave();
+    } catch (error) {
+      console.error('ERROR in death door lottery:', error);
     }
-    safeSave();
     return;
   }
 
@@ -306,23 +314,27 @@ function checkDeath(channel) {
       data.pet.zeroStatsTime = now;
     } else if (now - data.pet.zeroStatsTime >= 3600000) { // 1 hour
       // Misi at death's door
-      channel.send("Misi jest u bram Smierci! Losuje czy przezyje...");
-      
-      if (Math.random() < 0.25) { // 25% chance to survive
-        channel.send("Misi cudem przezyl! Ale statystyki zostaly zresetowane do minimum.");
-        data.pet.hunger = 1;
-        data.pet.happiness = 1;
-        data.pet.health = 1;
-        data.pet.cleanliness = 1;
-        data.pet.zeroStatsTime = null;
-      } else {
-        // Misi dies
-        data.pet.dead = true;
-        data.pet.deathTime = now;
-        data.pet.deathCount++;
-        channel.send("Twoj Misi zmarl. Nie umiesz dbac o Misi.");
+      try {
+        channel.send("Misi jest u bram Smierci! Losuje czy przezyje...");
+        
+        if (Math.random() < 0.25) { // 25% chance to survive
+          channel.send("Misi cudem przezyl! Ale statystyki zostaly zresetowane do minimum.");
+          data.pet.hunger = 1;
+          data.pet.happiness = 1;
+          data.pet.health = 1;
+          data.pet.cleanliness = 1;
+          data.pet.zeroStatsTime = null;
+        } else {
+          // Misi dies
+          data.pet.dead = true;
+          data.pet.deathTime = now;
+          data.pet.deathCount++;
+          channel.send("Twoj Misi zmarl. Nie umiesz dbac o Misi.");
+        }
+        safeSave();
+      } catch (error) {
+        console.error('ERROR in death check:', error);
       }
-      safeSave();
     }
   } else {
     data.pet.zeroStatsTime = null;
@@ -435,6 +447,10 @@ client.on('messageCreate', (message) => {
 
   const userId = message.author.id;
   ensureUser(userId);
+
+  // DEBUG: Log każdej komendy
+  console.log('DEBUG: Message received:', message.content, 'from:', userId);
+  console.log('DEBUG: Misi dead?', data.pet.dead);
 
   // 🚨 EMERGENCY RESTORE (ADMIN ONLY) - PRZED blokadą śmierci!
   if (message.content === '!restore') {
