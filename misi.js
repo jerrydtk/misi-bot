@@ -623,7 +623,7 @@ client.on('messageCreate', (message) => {
 💝 !gift @user monety - wyslij monety
 
 🎮 !use <item> - użyj przedmiot z inventory
-🐻 !adopt - adoptuj nowego Misia (po śmierci, po 24h)`);
+🐻 !adopt - adoptuj nowego Misia (po śmierci, po 6h)`);
   }
 
   if (message.content === '!status') {
@@ -656,16 +656,15 @@ client.on('messageCreate', (message) => {
     const now = Date.now();
     const lastFeed = data.users[userId].lastFeed || 0;
     if (now - lastFeed < 600000) { // 10 minut cooldown
+      // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
+      setTimeout(() => {
+        message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym karmieniem Misia! 🍗`);
+      }, 3000);
       return message.reply("⏳ Poczekaj 10 minut przed kolejnym karmieniem!");
     }
-    
-    // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
-    setTimeout(() => {
-      message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym karmieniem Misia! 🍗`);
-    }, 3000);
-    return message.reply("⏳ Poczekaj 10 minut przed kolejnym karmieniem!");
-  }
-  data.pet.hunger = Math.min(100, data.pet.hunger + 15);
+
+    const feedBefore = data.pet.hunger;
+    data.pet.hunger = Math.min(100, data.pet.hunger + 15);
   clampPet();
 
   // Losowanie monet 5-20 + bonus 12% na 1-6
@@ -699,6 +698,7 @@ client.on('messageCreate', (message) => {
   setTimeout(() => {
     message.channel.send(`📝 ${message.author.username} nakarmił Misia! 🍗`);
   }, 2000);
+  }
 
   // 🎾 PLAY - NOWA WERSJA Z ANTYSPAMEM
   if (message.content === '!play') {
@@ -710,16 +710,15 @@ client.on('messageCreate', (message) => {
     const now = Date.now();
     const lastPlay = data.users[userId].lastPlay || 0;
     if (now - lastPlay < 600000) { // 10 minut cooldown
+      // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
+      setTimeout(() => {
+        message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejną zabawą z Misiem! 🎾`);
+      }, 3000);
       return message.reply("⏳ Poczekaj 10 minut przed kolejną zabawą!");
     }
-    
-    // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
-    setTimeout(() => {
-      message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejną zabawą z Misiem! 🎾`);
-    }, 3000);
-    return message.reply("⏳ Poczekaj 10 minut przed kolejną zabawą!");
-  }
-  data.pet.happiness = Math.min(100, data.pet.happiness + 10);
+
+    const playBefore = data.pet.happiness;
+    data.pet.happiness = Math.min(100, data.pet.happiness + 10);
   data.pet.happinessLossSincePlay = 0;
   data.pet.lastPlayAt = Date.now();
   clampPet();
@@ -754,6 +753,7 @@ client.on('messageCreate', (message) => {
   setTimeout(() => {
     message.channel.send(`📝 ${message.author.username} bawił się z Misiem! 🎾`);
   }, 2000);
+  }
 
   // 🧼 CLEAN - NOWA WERSJA Z ANTYSPAMEM
   if (message.content === '!clean') {
@@ -765,16 +765,15 @@ client.on('messageCreate', (message) => {
     const now = Date.now();
     const lastClean = data.users[userId].lastClean || 0;
     if (now - lastClean < 600000) { // 10 minut cooldown
+      // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
+      setTimeout(() => {
+        message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym czyszczeniem Misia! 🧼`);
+      }, 3000);
       return message.reply("⏳ Poczekaj 10 minut przed kolejnym czyszczeniem!");
     }
-    
-    // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
-    setTimeout(() => {
-      message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym czyszczeniem Misia! 🧼`);
-    }, 3000);
-    return message.reply("⏳ Poczekaj 10 minut przed kolejnym czyszczeniem!");
-  }
-  data.pet.cleanliness = Math.min(100, data.pet.cleanliness + 10);
+
+    const cleanBefore = data.pet.cleanliness;
+    data.pet.cleanliness = Math.min(100, data.pet.cleanliness + 10);
   clampPet();
 
   // Losowanie monet 5-20
@@ -810,6 +809,7 @@ client.on('messageCreate', (message) => {
   setTimeout(() => {
     message.channel.send(`📝 ${message.author.username} umył Misiego! 🧼`);
   }, 2000);
+  }
 
   // ❤️ HEAL - NOWA WERSJA Z ANTYSPAMEM
   if (message.content === '!heal') {
@@ -821,16 +821,15 @@ client.on('messageCreate', (message) => {
     const now = Date.now();
     const lastHeal = data.users[userId].lastHeal || 0;
     if (now - lastHeal < 600000) { // 10 minut cooldown
+      // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
+      setTimeout(() => {
+        message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym leczeniem Misia! ❤️`);
+      }, 3000);
       return message.reply("⏳ Poczekaj 10 minut przed kolejnym leczeniem!");
     }
-    
-    // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
-    setTimeout(() => {
-      message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym leczeniem Misia! ❤️`);
-    }, 3000);
-    return message.reply("⏳ Poczekaj 10 minut przed kolejnym leczeniem!");
-  }
-  data.pet.health = Math.min(100, data.pet.health + 15);
+
+    const healBefore = data.pet.health;
+    data.pet.health = Math.min(100, data.pet.health + 15);
   clampPet();
 
   // Losowanie monet 5-20 + bonus 12% na 1-6
@@ -864,6 +863,7 @@ client.on('messageCreate', (message) => {
   setTimeout(() => {
     message.channel.send(`📝 ${message.author.username} uleczył Misia! ❤️`);
   }, 2000);
+  }
 
   if (message.content === '!calm') {
     if (data.pet.dead) {
@@ -890,8 +890,8 @@ client.on('messageCreate', (message) => {
     
     const now = Date.now();
     const lastPray = data.users[userId].lastPray || 0;
-    if (now - lastPray < 18000000) { // 5 godzin cooldown
-      return message.reply("⏳ Poczekaj 5 godzin przed kolejną modlitwą!");
+    if (data.pet.dead && now - data.pet.deathTime < 21600000) { // 6h cooldown po śmierci
+      return message.reply(`⏳ Musisz poczekać 6 godzin przed adopcją nowego Misia!`);
     }
 
     data.users[userId].lastPray = now; // zapisz czas modlitwy
@@ -1144,8 +1144,9 @@ client.on('messageCreate', (message) => {
       ]
     });
   }
+});
 
-}); // ← FIX NA BŁĄD
+// ← FIX NA BŁĄD
 
 // POSSESSED MESSAGES
 function sendPossessedMessage(channel) {
@@ -1375,5 +1376,5 @@ if (!DISCORD_TOKEN) {
   console.error('ERROR: Missing DISCORD_TOKEN environment variable. Set it in Railway variables.');
   process.exit(1);
 }
-client.login(DISCORD_TOKEN);
 
+client.login(DISCORD_TOKEN);
