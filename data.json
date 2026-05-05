@@ -1,0 +1,159 @@
+{
+  "pet": {
+    "hunger": 0,
+    "happiness": 0,
+    "health": 0,
+    "cleanliness": 0,
+    "anger": 0,
+    "religion": 98.95833333333314,
+    "happinessLossSincePlay": 2.4999999999999987,
+    "lastPlayAt": 1777939784065,
+    "possessed": false,
+    "dead": false,
+    "deathTime": null,
+    "zeroStatsTime": null
+  },
+  "users": {
+    "276047431534379010": {
+      "coins": 63,
+      "xp": 270,
+      "cooldowns": {
+        "play": 1777914770854,
+        "feed": 1777914758587,
+        "clean": 1777914762788,
+        "heal": 1777914766817
+      },
+      "inventory": {
+        "piłka": 0,
+        "karma": 0,
+        "chrupki": 0,
+        "mydło": 0,
+        "lek": 0,
+        "miód": 0
+      },
+      "achievements": [],
+      "trust": 52,
+      "mood": "hungry",
+      "messages": null,
+      "lastTalk": 1777858051908,
+      "itemCooldowns": {
+        "chrupki": [
+          1777897140445
+        ],
+        "mydło": [
+          1777905788625
+        ],
+        "lek": [
+          1777905797869
+        ],
+        "miód": [
+          1777905793069
+        ],
+        "karma": [
+          1777909713848
+        ],
+        "piłka": [
+          1777915005894
+        ]
+      }
+    },
+    "392410738439749652": {
+      "coins": 87,
+      "xp": 110,
+      "cooldowns": {
+        "clean": 1777917995422,
+        "play": 1777917986896,
+        "heal": 1777917992811,
+        "feed": 1777917983872
+      },
+      "inventory": {
+        "box": 0,
+        "mydło": 0
+      },
+      "itemCooldowns": {
+        "box": [
+          1777915037267
+        ],
+        "mydło": [
+          1777915072779
+        ]
+      }
+    },
+    "508375438620360719": {
+      "coins": 34,
+      "xp": 25,
+      "level": 1,
+      "inventory": {},
+      "cooldowns": {
+        "clean": 1777906056952,
+        "play": 1777902353287
+      },
+      "itemCooldowns": {},
+      "trust": 50,
+      "mood": "neutral"
+    },
+    "392411251147538432": {
+      "coins": 18,
+      "xp": 35,
+      "level": 1,
+      "inventory": {
+        "lek": 0
+      },
+      "cooldowns": {
+        "play": 1777911954246,
+        "clean": 1777911989087,
+        "feed": 1777901408975,
+        "heal": 1777911974763
+      },
+      "itemCooldowns": {
+        "lek": [
+          1777912060058
+        ]
+      },
+      "trust": 50,
+      "mood": "neutral"
+    },
+    "276039188103561216": {
+      "coins": 178,
+      "xp": 55,
+      "level": 2,
+      "inventory": {},
+      "cooldowns": {
+        "play": 1777923796423,
+        "clean": 1777922392228,
+        "heal": 1777923793567,
+        "feed": 1777923799836
+      },
+      "itemCooldowns": {},
+      "trust": 50,
+      "mood": "neutral"
+    },
+    "357936864319111169": {
+      "coins": 83,
+      "xp": 10,
+      "level": 2,
+      "inventory": {
+        "mydło": 0
+      },
+      "cooldowns": {
+        "clean": 1777917991261,
+        "feed": 1777917993673,
+        "play": 1777917998558,
+        "heal": 1777918001260
+      },
+      "itemCooldowns": {
+        "mydło": [
+          1777913895607
+        ]
+      },
+      "trust": 50,
+      "mood": "neutral"
+    }
+  },
+  "alerts": {
+    "hunger": true,
+    "happiness": true,
+    "health": true,
+    "cleanliness": true
+  }
+}
