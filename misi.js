@@ -144,6 +144,10 @@ function getLuckyBonus() {
   return Math.random() < 0.08 ? getRandomInt(1, 6) : 0;
 }
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // 🎨 HUD
 function bar(v) {
   const n = Math.round(v / 10);
@@ -659,28 +663,42 @@ client.on('messageCreate', (message) => {
     setTimeout(() => {
       message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym karmieniem Misia! 🍗`);
     }, 3000);
-    }
-
-    const before = data.pet.hunger;
-    data.pet.hunger = Math.min(100, data.pet.hunger + 15);
-    clampPet();
-
-    // Losowanie monet 5-20 + bonus 12% na 1-6
-    const coins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
-    let bonus = 0;
-    if (Math.random() < 0.12) { // 12% szansa
-      bonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
-    }
-    
-    data.users[userId].coins += coins + bonus;
-    data.users[userId].xp += 5;
-    data.users[userId].lastFeed = now; // zapisz czas karmienia
-
-    safeSave();
-
-    return message.reply({
-      embeds: [
+    return message.reply("⏳ Poczekaj 10 minut przed kolejnym karmieniem!");
   }
+  data.pet.hunger = Math.min(100, data.pet.hunger + 15);
+  clampPet();
+
+  // Losowanie monet 5-20 + bonus 12% na 1-6
+  const feedCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
+  let feedBonus = 0;
+  if (Math.random() < 0.12) { // 12% szansa
+    feedBonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
+  }
+  
+  data.users[userId].coins += feedCoins + feedBonus;
+  data.users[userId].xp += 5;
+  data.users[userId].lastFeed = now; // zapisz czas karmienia
+
+  safeSave();
+
+  return message.reply({
+    embeds: [
+      new EmbedBuilder()
+        .setTitle("🍗 Nakarmiłeś Misia!")
+        .setDescription(`**Głód:** ${Math.round(before)} → ${Math.round(data.pet.hunger)}\n**Otrzymano:** 💰 ${feedCoins} monet${feedBonus > 0 ? ` + bonus ${feedBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
+        .addFields(
+          { name: "Głód", value: bar(data.pet.hunger), inline: false },
+          { name: "💰 Szansa bonusu", value: "12%", inline: true },
+          { name: "🎲 Zakres monet", value: "5-20", inline: true }
+        )
+        .setColor(data.pet.hunger > 70 ? 0x00ff00 : data.pet.hunger > 40 ? 0xffff00 : 0xff0000)
+    ]
+  });
+
+  // Powiadomienie o wykonaniu akcji
+  setTimeout(() => {
+    message.channel.send(`📝 ${message.author.username} nakarmił Misia! 🍗`);
+  }, 2000);
 
   // 🎾 PLAY - NOWA WERSJA Z ANTYSPAMEM
   if (message.content === '!play') {
@@ -699,35 +717,43 @@ client.on('messageCreate', (message) => {
     setTimeout(() => {
       message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejną zabawą z Misiem! 🎾`);
     }, 3000);
-    }
-
-    const before = data.pet.happiness;
-    data.pet.happiness = Math.min(100, data.pet.happiness + 10);
-    data.pet.happinessLossSincePlay = 0;
-    data.pet.lastPlayAt = Date.now();
-    clampPet();
-
-    // Losowanie monet 5-20 + bonus 12% na 1-6
-    const coins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
-    let bonus = 0;
-    if (Math.random() < 0.12) { // 12% szansa
-      bonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
-    }
-    
-    data.users[userId].coins += coins + bonus;
-    data.users[userId].xp += 5;
-
-            { name: "🎲 Zakres monet", value: "5-20", inline: true }
-          )
-          .setColor(data.pet.hunger > 70 ? 0x00ff00 : data.pet.hunger > 40 ? 0xffff00 : 0xff0000)
-      ]
-    });
-
-    // Powiadomienie o wykonaniu akcji
-    setTimeout(() => {
-      message.channel.send(`📝 ${message.author.username} bawił się z Misiem! �`);
-    }, 2000);
+    return message.reply("⏳ Poczekaj 10 minut przed kolejną zabawą!");
   }
+  data.pet.happiness = Math.min(100, data.pet.happiness + 10);
+  data.pet.happinessLossSincePlay = 0;
+  data.pet.lastPlayAt = Date.now();
+  clampPet();
+
+  // Losowanie monet 5-20 + bonus 12% na 1-6
+  const playCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
+  let playBonus = 0;
+  if (Math.random() < 0.12) { // 12% szansa
+    playBonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
+  }
+  
+  data.users[userId].coins += playCoins + playBonus;
+  data.users[userId].xp += 5;
+
+  safeSave();
+
+  return message.reply({
+    embeds: [
+      new EmbedBuilder()
+        .setTitle("🎾 Bawiłeś się z Misiem!")
+        .setDescription(`**Szczęście:** ${Math.round(playBefore)} → ${Math.round(data.pet.happiness)}\n**Otrzymano:** 💰 ${playCoins} monet${playBonus > 0 ? ` + bonus ${playBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
+        .addFields(
+          { name: "Szczęście", value: bar(data.pet.happiness), inline: false },
+          { name: "💰 Szansa bonusu", value: "12%", inline: true },
+          { name: "🎲 Zakres monet", value: "5-20", inline: true }
+        )
+        .setColor(data.pet.happiness > 70 ? 0x00ff00 : data.pet.happiness > 40 ? 0xffff00 : 0xff0000)
+    ]
+  });
+
+  // Powiadomienie o wykonaniu akcji
+  setTimeout(() => {
+    message.channel.send(`📝 ${message.author.username} bawił się z Misiem! 🎾`);
+  }, 2000);
 
   // 🧼 CLEAN - NOWA WERSJA Z ANTYSPAMEM
   if (message.content === '!clean') {
@@ -746,46 +772,44 @@ client.on('messageCreate', (message) => {
     setTimeout(() => {
       message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym czyszczeniem Misia! 🧼`);
     }, 3000);
-    }
-
-    const before = data.pet.cleanliness;
-    data.pet.cleanliness = Math.min(100, data.pet.cleanliness + 10);
-    clampPet();
-
-    // Losowanie monet 5-20
-    const coins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
-    
-    // Szansa 12% na dodatkowe monety 1-6
-    let bonus = 0;
-    if (Math.random() < 0.12) { // 12% szansa
-      bonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
-    }
-
-    data.users[userId].coins += coins + bonus;
-    data.users[userId].xp += 5;
-    data.users[userId].lastClean = now; // zapisz czas czyszczenia
-
-    safeSave();
-
-    return message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setTitle("🧼 Umył(a)ś Misiego!")
-          .setDescription(`**Czystość:** ${Math.round(before)} → ${Math.round(data.pet.cleanliness)}\n**Otrzymano:** 💰 ${coins} monet${bonus > 0 ? ` + bonus ${bonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
-          .addFields(
-            { name: "Czystość", value: bar(data.pet.cleanliness), inline: false },
-            { name: "💰 Szansa bonusu", value: "12%", inline: true },
-            { name: "🎲 Zakres monet", value: "5-20", inline: true }
-          )
-          .setColor(data.pet.cleanliness > 70 ? 0x00ff00 : data.pet.cleanliness > 40 ? 0xffff00 : 0xff0000)
-      ]
-    });
-
-    // Powiadomienie o wykonaniu akcji
-    setTimeout(() => {
-      message.channel.send(`📝 ${message.author.username} umył Misiego! 🧼`);
-    }, 2000);
+    return message.reply("⏳ Poczekaj 10 minut przed kolejnym czyszczeniem!");
   }
+  data.pet.cleanliness = Math.min(100, data.pet.cleanliness + 10);
+  clampPet();
+
+  // Losowanie monet 5-20
+  const cleanCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
+  
+  // Szansa 12% na dodatkowe monety 1-6
+  let cleanBonus = 0;
+  if (Math.random() < 0.12) { // 12% szansa
+    cleanBonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
+  }
+
+  data.users[userId].coins += cleanCoins + cleanBonus;
+  data.users[userId].xp += 5;
+  data.users[userId].lastClean = now; // zapisz czas czyszczenia
+
+  safeSave();
+
+  return message.reply({
+    embeds: [
+      new EmbedBuilder()
+        .setTitle("🧼 Umył(a)ś Misiego!")
+        .setDescription(`**Czystość:** ${Math.round(cleanBefore)} → ${Math.round(data.pet.cleanliness)}\n**Otrzymano:** 💰 ${cleanCoins} monet${cleanBonus > 0 ? ` + bonus ${cleanBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
+        .addFields(
+          { name: "Czystość", value: bar(data.pet.cleanliness), inline: false },
+          { name: "💰 Szansa bonusu", value: "12%", inline: true },
+          { name: "🎲 Zakres monet", value: "5-20", inline: true }
+        )
+        .setColor(data.pet.cleanliness > 70 ? 0x00ff00 : data.pet.cleanliness > 40 ? 0xffff00 : 0xff0000)
+    ]
+  });
+
+  // Powiadomienie o wykonaniu akcji
+  setTimeout(() => {
+    message.channel.send(`📝 ${message.author.username} umył Misiego! 🧼`);
+  }, 2000);
 
   // ❤️ HEAL - NOWA WERSJA Z ANTYSPAMEM
   if (message.content === '!heal') {
@@ -804,24 +828,48 @@ client.on('messageCreate', (message) => {
     setTimeout(() => {
       message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym leczeniem Misia! ❤️`);
     }, 3000);
-    }
+    return message.reply("⏳ Poczekaj 10 minut przed kolejnym leczeniem!");
+  }
+  data.pet.health = Math.min(100, data.pet.health + 15);
+  clampPet();
 
-    const before = data.pet.health;
-    data.pet.health = Math.min(100, data.pet.health + 15);
-    clampPet();
+  // Losowanie monet 5-20 + bonus 12% na 1-6
+  const healCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
+  let healBonus = 0;
+  if (Math.random() < 0.12) { // 12% szansa
+    healBonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
+  }
+  
+  data.users[userId].coins += healCoins + healBonus;
+  data.users[userId].xp += 5;
+  data.users[userId].lastHeal = now; // zapisz czas leczenia
 
-    // Losowanie monet 5-20 + bonus 12% na 1-6
-    const coins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
-    let bonus = 0;
-    if (Math.random() < 0.12) { // 12% szansa
-      bonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
-    }
-    
-    data.users[userId].coins += coins + bonus;
-    data.users[userId].xp += 5;
-    data.users[userId].lastHeal = now; // zapisz czas leczenia
+  safeSave();
+
+  return message.reply({
+    embeds: [
+      new EmbedBuilder()
+        .setTitle("❤️ Uleczyłeś Misia!")
+        .setDescription(`**Zdrowie:** ${Math.round(healBefore)} → ${Math.round(data.pet.health)}\n**Otrzymano:** 💰 ${healCoins} monet${healBonus > 0 ? ` + bonus ${healBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
+        .addFields(
+          { name: "Zdrowie", value: bar(data.pet.health), inline: false },
+          { name: "💰 Szansa bonusu", value: "12%", inline: true },
+          { name: "🎲 Zakres monet", value: "5-20", inline: true }
+        )
+        .setColor(data.pet.health > 70 ? 0x00ff00 : data.pet.health > 40 ? 0xffff00 : 0xff0000)
+    ]
+  });
+
+  // Powiadomienie o wykonaniu akcji
+  setTimeout(() => {
+    message.channel.send(`📝 ${message.author.username} uleczył Misia! ❤️`);
+  }, 2000);
 
   if (message.content === '!calm') {
+    if (data.pet.dead) {
+      return message.reply("❌ Misi nie żyje! Użyj `!adopt` lub `!restore`.");
+    }
+    
     const cd = canUse(userId,'calm',600000);
     if (!cd.ok) return message.reply(cd.msg);
 
@@ -836,14 +884,15 @@ client.on('messageCreate', (message) => {
   }
   // 🙏 PRAY - Z COOLDOWNEM 5 GODZIN
   if (message.content === '!pray') {
+    if (data.pet.dead) {
+      return message.reply("❌ Misi nie żyje! Użyj `!adopt` lub `!restore`.");
+    }
+    
     const now = Date.now();
     const lastPray = data.users[userId].lastPray || 0;
     if (now - lastPray < 18000000) { // 5 godzin cooldown
       return message.reply("⏳ Poczekaj 5 godzin przed kolejną modlitwą!");
     }
-
-    const cd = canUse(userId,'pray',600000);
-    if (!cd.ok) return message.reply(cd.msg);
 
     data.users[userId].lastPray = now; // zapisz czas modlitwy
 
@@ -956,7 +1005,7 @@ client.on('messageCreate', (message) => {
       `${item.emoji} **${name}** - ${item.price} monet | ❤️${item.health}`
     ).join('\n');
     
-    const hygeneItems = Object.entries(SHOP).filter(([,v]) => v.type.includes('hygiene')).map(([name, item]) => 
+    const hygieneItems = Object.entries(SHOP).filter(([,v]) => v.type.includes('hygiene')).map(([name, item]) => 
       `${item.emoji} **${name}** - ${item.price} monet | 🧼${item.cleanliness}`
     ).join('\n');
     
@@ -986,7 +1035,7 @@ client.on('messageCreate', (message) => {
       { name: '🍗 JEDZENIE', value: foodItems, inline: false },
       { name: '🎾 ZABAWKI', value: toyItems, inline: false },
       { name: '💊 MEDYCYNA', value: medicineItems, inline: false },
-      { name: '🧼 HIGIENA', value: hygeneItems, inline: false },
+      { name: '🧼 HIGIENA', value: hygieneItems, inline: false },
       { name: '🔥 UŻYWKI', value: drugItems, inline: false },
       { name: '🙏 RELIGIA', value: religiousItems, inline: false },
       { name: '🎁 SPECJALNE', value: mysteryItems, inline: false },
@@ -1105,11 +1154,11 @@ function sendPossessedMessage(channel) {
 
   const randomUser = users[Math.floor(Math.random() * users.length)];
   const messages = [
-    `Opetany @${randomUser} dlaczego sie ze mna nie bawisz? Czuje sie samotny...`,
-    `Opetany Odwracam sie od ciebie @${randomUser}, bo mnie ignorujesz!`,
-    `Opetany @${randomUser} pamietaj, ze jestem tu dla ciebie, ale ty mnie zostawiasz samego!`,
-    `Opetany Czuje zlość @${randomUser}, dlaczego mnie zaniedbujesz?`,
-    `Opetany @${randomUser} wroc do mnie, inaczej bede jeszcze bardziej zly!`
+    `Opetany <@${randomUser}> dlaczego sie ze mna nie bawisz? Czuje sie samotny...`,
+    `Opetany Odwracam sie od ciebie <@${randomUser}>, bo mnie ignorujesz!`,
+    `Opetany <@${randomUser}> pamietaj, ze jestem tu dla ciebie, ale ty mnie zostawiasz samego!`,
+    `Opetany Czuje zlość <@${randomUser}>, dlaczego mnie zaniedbujesz?`,
+    `Opetany <@${randomUser}> wroc do mnie, inaczej bede jeszcze bardziej zly!`
   ];
 
   const randomMessage = messages[Math.floor(Math.random() * messages.length)];
@@ -1158,7 +1207,7 @@ function checkCriticalStates(channel) {
   
   if (data.pet.cleanliness <= 10 && !data.alerts.cleanliness) {
     alerts.push({
-      title: "Misi jest bardzo brudny!",
+      title: "🧼 Misi jest bardzo brudny!",
       description: "Misi potrzebuje kąpieli!\nUżyj `!clean` w ciągu 5 minut!",
       color: 0x8b4513,
       stat: "cleanliness"
