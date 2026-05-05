@@ -214,20 +214,8 @@ function checkDeathDoorReminder(channel) {
     if (data.pet.health <= 0) zeroStats.push("Zdrowie");
     if (data.pet.cleanliness <= 0) zeroStats.push("Czystość");
     
-    channel.send({
-      embeds: [
-        new EmbedBuilder()
-          .setTitle("⚠️ MISI JEST U BRAM ŚMIERCI!")
-          .setDescription(`Misi ma **0** w statystyce: ${zeroStats.join(", ")}!\n\n**MAC 15 MINUT** aby uratować Misia!\nUżyj komend \`!feed\`, \`!play\`, \`!clean\`, \`!heal\` lub przedmiotów z inventory!\n\nJeśli nikt nie zareaguje w ciągu 15 minut, odbędzie się losowanie o życie Misia!`)
-          .addFields(
-            { name: "🐻 Status Misiego", value: petStatus(), inline: false },
-            { name: "⏰ Czas na reakcję", value: "15 minut", inline: true },
-            { name: "🎲 Szansa na przeżycie", value: "25%", inline: true }
-          )
-          .setColor(0xff0000)
-          .setTimestamp()
-      ]
-    });
+    // Send initial reminder
+    sendDeathDoorReminder(channel, zeroStats);
     
     safeSave();
   } else if (!anyStatZero && data.pet.deathDoorReminderSent) {
@@ -236,6 +224,29 @@ function checkDeathDoorReminder(channel) {
     data.pet.deathDoorReminderSent = false;
     safeSave();
   }
+}
+
+// 📢 DEATH DOOR REMINDER MESSAGE
+function sendDeathDoorReminder(channel, zeroStats) {
+  const now = Date.now();
+  const elapsed = now - data.pet.deathDoorTime;
+  const remaining = Math.max(0, 900000 - elapsed); // 15 minutes = 900000 ms
+  const minutes = Math.ceil(remaining / 60000);
+  
+  channel.send({
+    embeds: [
+      new EmbedBuilder()
+        .setTitle("⚠️ MISI JEST U BRAM ŚMIERCI!")
+        .setDescription(`Misi ma **0** w statystyce: ${zeroStats.join(", ")}!\n\n**MAC ${minutes} MINUT** aby uratować Misia!\nUżyj komend \`!feed\`, \`!play\`, \`!clean\`, \`!heal\` lub przedmiotów z inventory!\n\nJeśli nikt nie zareaguje w ciągu ${minutes} minut, odbędzie się losowanie o życie Misia!`)
+        .addFields(
+          { name: "🐻 Status Misiego", value: petStatus(), inline: false },
+          { name: "⏰ Czas na reakcję", value: `${minutes} minut`, inline: true },
+          { name: "🎲 Szansa na przeżycie", value: "25%", inline: true }
+        )
+        .setColor(0xff0000)
+        .setTimestamp()
+    ]
+  });
 }
 
 // 💀 DEATH CHECK
@@ -425,44 +436,7 @@ client.on('messageCreate', (message) => {
   const userId = message.author.id;
   ensureUser(userId);
 
-  // Check if Misi is dead
-  if (data.pet.dead) {
-    if (message.content === '!adopt') {
-      const now = Date.now();
-      if (data.pet.deathTime && now - data.pet.deathTime >= 21600000) { // 6 hours
-        // Reset everything
-        data.pet = {
-          hunger: 50,
-          happiness: 50,
-          health: 100,
-          cleanliness: 100,
-          anger: 0,
-          religion: 100,
-          happinessLossSincePlay: 0,
-          lastPlayAt: Date.now(),
-          possessed: false,
-          dead: false,
-          deathTime: null,
-          zeroStatsTime: null,
-          deathDoorTime: null,
-          deathDoorReminderSent: false,
-          survivalDays: 0,
-          adoptedAt: Date.now()
-        };
-        data.alerts = { hunger: false, happiness: false, health: false, cleanliness: false };
-        safeSave();
-        return message.reply("🐻 Adoptowałeś nowego Misia! Opieka zaczyna się od nowa.");
-      } else {
-        const remainingMs = 21600000 - (now - (data.pet.deathTime || 0));
-        const hours = Math.floor(remainingMs / 3600000);
-        const minutes = Math.floor((remainingMs % 3600000) / 60000);
-        return message.reply(`⏳ Możesz adoptować nowego Misia za ${hours}h ${minutes}m.`);
-      }
-    }
-    return message.reply("Twoj Misi zmarl, nie umiesz dbac o Misi.");
-  }
-
-  // 🚨 EMERGENCY RESTORE (ADMIN ONLY)
+  // 🚨 EMERGENCY RESTORE (ADMIN ONLY) - PRZED blokadą śmierci!
   if (message.content === '!restore') {
     if (userId !== ADMIN_ID) {
       return message.reply("❌ Nie masz uprawnień do tej komendy!");
@@ -516,6 +490,74 @@ client.on('messageCreate', (message) => {
           .setTimestamp()
       ]
     });
+  }
+
+  // 🔫 ADMIN KILL COMMAND
+  if (message.content === '!kill') {
+    if (userId !== ADMIN_ID) {
+      return message.reply("❌ Nie masz uprawnień do tej komendy!");
+    }
+
+    if (data.pet.dead) {
+      return message.reply("❌ Misi już jest martwy!");
+    }
+
+    // Kill Misi
+    data.pet.dead = true;
+    data.pet.deathTime = Date.now();
+    data.pet.deathCount++;
+    safeSave();
+
+    return message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("💀 ADMIN KILL")
+          .setDescription("Misi został zabity przez admina!\n\nUżyj `!restore` aby przywrócić go do życia.")
+          .addFields(
+            { name: "🐻 Status", value: "Martwy", inline: true },
+            { name: "💀 Liczba śmierci", value: data.pet.deathCount, inline: true }
+          )
+          .setColor(0xff0000)
+          .setTimestamp()
+      ]
+    });
+  }
+
+  // Check if Misi is dead
+  if (data.pet.dead) {
+    if (message.content === '!adopt') {
+      const now = Date.now();
+      if (data.pet.deathTime && now - data.pet.deathTime >= 21600000) { // 6 hours
+        // Reset everything
+        data.pet = {
+          hunger: 50,
+          happiness: 50,
+          health: 100,
+          cleanliness: 100,
+          anger: 0,
+          religion: 100,
+          happinessLossSincePlay: 0,
+          lastPlayAt: Date.now(),
+          possessed: false,
+          dead: false,
+          deathTime: null,
+          zeroStatsTime: null,
+          deathDoorTime: null,
+          deathDoorReminderSent: false,
+          survivalDays: 0,
+          adoptedAt: Date.now()
+        };
+        data.alerts = { hunger: false, happiness: false, health: false, cleanliness: false };
+        safeSave();
+        return message.reply("🐻 Adoptowałeś nowego Misia! Opieka zaczyna się od nowa.");
+      } else {
+        const remainingMs = 21600000 - (now - (data.pet.deathTime || 0));
+        const hours = Math.floor(remainingMs / 3600000);
+        const minutes = Math.floor((remainingMs % 3600000) / 60000);
+        return message.reply(`⏳ Możesz adoptować nowego Misia za ${hours}h ${minutes}m.`);
+      }
+    }
+    return message.reply("Twoj Misi zmarl, nie umiesz dbac o Misi.");
   }
 
   if (!message.content.startsWith('!')) aiReply(message);
