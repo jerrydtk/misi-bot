@@ -13,30 +13,30 @@ const allowedChannelName = 'misi';
 
 // SHOP ITEMS
 const SHOP = {
-  'jabłko': { emoji: 'apple', price: 10, type: 'food', hunger: 10, happiness: 0, health: 0, maxUsePerHour: 3, cooldown: 60000 },
-  'MisiChrupki': { emoji: 'pretzel', price: 15, type: 'food', hunger: 20, happiness: 5, health: 0, maxUsePerHour: 2, cooldown: 120000 },
-  'miód': { emoji: 'honey', price: 20, type: 'food', hunger: 15, happiness: 10, health: 5, maxUsePerHour: 2, cooldown: 120000 },
-  'woda': { emoji: 'water', price: 8, type: 'drink', hunger: 0, happiness: 5, health: 10, maxUsePerHour: 3, cooldown: 60000 },
-  'sok': { emoji: 'juice', price: 12, type: 'drink', hunger: 10, happiness: 10, health: 5, maxUsePerHour: 2, cooldown: 120000 },
-  'herbata': { emoji: 'tea', price: 15, type: 'drink', hunger: 0, happiness: 10, health: 15, maxUsePerHour: 2, cooldown: 120000 },
-  'karma': { emoji: 'paw_prints', price: 50, type: 'food', hunger: 40, happiness: 15, health: 0, maxUsePerHour: 2, cooldown: 120000 },
-  'lek': { emoji: 'pill', price: 40, type: 'medicine', hunger: 0, happiness: 0, health: 30, maxUsePerHour: 2, cooldown: 180000 },
-  'ibuprom': { emoji: 'pill', price: 45, type: 'medicine', hunger: 0, happiness: 0, health: 35, maxUsePerHour: 2, cooldown: 180000 },
-  'altacet': { emoji: 'bandage', price: 35, type: 'medicine', hunger: 0, happiness: 0, health: 25, maxUsePerHour: 2, cooldown: 180000 },
-  'witaminaC': { emoji: 'orange', price: 30, type: 'medicine', hunger: 0, happiness: 5, health: 20, maxUsePerHour: 2, cooldown: 180000 },
-  'mydło': { emoji: 'soap', price: 25, type: 'hygiene', hunger: 0, happiness: 0, cleanliness: 25, maxUsePerHour: 3, cooldown: 60000 },
-  'piłka': { emoji: 'tennis', price: 30, type: 'toy', hunger: 0, happiness: 20, health: 0, maxUsePerHour: 1, cooldown: 300000 },
-  'klocki': { emoji: 'bricks', price: 45, type: 'toy', hunger: 0, happiness: 25, health: 0, maxUsePerHour: 1, cooldown: 300000 },
-  'lego': { emoji: 'bricks', price: 55, type: 'toy', hunger: 0, happiness: 30, health: 0, maxUsePerHour: 1, cooldown: 300000 },
-  'pluszak': { emoji: 'teddy_bear', price: 35, type: 'toy', hunger: 0, happiness: 20, health: 0, maxUsePerHour: 1, cooldown: 300000 },
-  'samochodzik': { emoji: 'car', price: 40, type: 'toy', hunger: 0, happiness: 22, health: 0, maxUsePerHour: 1, cooldown: 300000 },
-  'snusy': { emoji: 'brown_square', price: 40, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 10, religion: -5, maxUsePerHour: 2, cooldown: 60000 },
-  'e-fajka': { emoji: 'battery', price: 60, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 18, religion: -10, maxUsePerHour: 2, cooldown: 60000 },
-  'fajki': { emoji: 'cigarette', price: 20, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 35, religion: -20, maxUsePerHour: 2, cooldown: 60000 },
-  'paczka Papierosów': { emoji: 'package', price: 180, type: 'drug', hunger: 0, happiness: 0, health: 0, packFor: 'fajki', packAmount: 10, maxUsePerHour: 1, cooldown: 60000 },
-  'krucyfiks': { emoji: 'cross', price: 500, type: 'religious', possessedRemove: true, maxUsePerHour: 1, cooldown: 60000 },
-  'biblia': { emoji: 'book', price: 200, type: 'religious', religion: 15, maxUsePerHour: 2, cooldown: 120000 },
-  'box': { emoji: 'gift', price: 100, type: 'mystery', hunger: 30, happiness: 30, health: 20, maxUsePerHour: 1, cooldown: 600000 }
+  'jabłko': { emoji: '🍎', price: 10, type: 'food', hunger: 10, happiness: 0, health: 0, maxUsePerHour: 3, cooldown: 60000 },
+  'MisiChrupki': { emoji: '🥨', price: 15, type: 'food', hunger: 20, happiness: 5, health: 0, maxUsePerHour: 2, cooldown: 120000 },
+  'miód': { emoji: '🍯', price: 20, type: 'food', hunger: 15, happiness: 10, health: 5, maxUsePerHour: 2, cooldown: 120000 },
+  'woda': { emoji: '💧', price: 8, type: 'drink', hunger: 0, happiness: 5, health: 10, maxUsePerHour: 3, cooldown: 60000 },
+  'sok': { emoji: '🧃', price: 12, type: 'drink', hunger: 10, happiness: 10, health: 5, maxUsePerHour: 2, cooldown: 120000 },
+  'herbata': { emoji: '🍵', price: 15, type: 'drink', hunger: 0, happiness: 10, health: 15, maxUsePerHour: 2, cooldown: 120000 },
+  'karma': { emoji: '🐾', price: 50, type: 'food', hunger: 40, happiness: 15, health: 0, maxUsePerHour: 2, cooldown: 120000 },
+  'lek': { emoji: '💊', price: 40, type: 'medicine', hunger: 0, happiness: 0, health: 30, maxUsePerHour: 2, cooldown: 180000 },
+  'ibuprom': { emoji: '💊', price: 45, type: 'medicine', hunger: 0, happiness: 0, health: 35, maxUsePerHour: 2, cooldown: 180000 },
+  'altacet': { emoji: '🩹', price: 35, type: 'medicine', hunger: 0, happiness: 0, health: 25, maxUsePerHour: 2, cooldown: 180000 },
+  'witaminaC': { emoji: '🍊', price: 30, type: 'medicine', hunger: 0, happiness: 5, health: 20, maxUsePerHour: 2, cooldown: 180000 },
+  'mydło': { emoji: '🧼', price: 25, type: 'hygiene', hunger: 0, happiness: 0, cleanliness: 25, maxUsePerHour: 3, cooldown: 60000 },
+  'piłka': { emoji: '🎾', price: 30, type: 'toy', hunger: 0, happiness: 20, health: 0, maxUsePerHour: 1, cooldown: 300000 },
+  'klocki': { emoji: '🧱', price: 45, type: 'toy', hunger: 0, happiness: 25, health: 0, maxUsePerHour: 1, cooldown: 300000 },
+  'lego': { emoji: '🧱', price: 55, type: 'toy', hunger: 0, happiness: 30, health: 0, maxUsePerHour: 1, cooldown: 300000 },
+  'pluszak': { emoji: '🧸', price: 35, type: 'toy', hunger: 0, happiness: 20, health: 0, maxUsePerHour: 1, cooldown: 300000 },
+  'samochodzik': { emoji: '🚗', price: 40, type: 'toy', hunger: 0, happiness: 22, health: 0, maxUsePerHour: 1, cooldown: 300000 },
+  'snusy': { emoji: '🟫', price: 40, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 10, maxUsePerHour: 2, cooldown: 60000 },
+  'e-fajka': { emoji: '🔋', price: 60, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 18, maxUsePerHour: 2, cooldown: 60000 },
+  'fajki': { emoji: '🚬', price: 20, type: 'drug', hunger: 0, happiness: 0, health: -2, angerReduce: 35, maxUsePerHour: 2, cooldown: 60000 },
+  'paczka Papierosów': { emoji: '📦', price: 180, type: 'drug', hunger: 0, happiness: 0, health: 0, packFor: 'fajki', packAmount: 10, maxUsePerHour: 1, cooldown: 60000 },
+  'krucyfiks': { emoji: '✝️', price: 500, type: 'religious', possessedRemove: true, maxUsePerHour: 1, cooldown: 60000 },
+  'biblia': { emoji: '📖', price: 200, type: 'religious', religion: 15, maxUsePerHour: 2, cooldown: 120000 },
+  'box': { emoji: '🎁', price: 100, type: 'mystery', hunger: 30, happiness: 30, health: 20, maxUsePerHour: 1, cooldown: 600000 }
 };
 
 // DATA
@@ -119,8 +119,14 @@ function clampPet() {
   data.pet.religion = Math.max(0, Math.min(100, data.pet.religion));
 }
 
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function findShopItem(itemName) {
+  const lowerName = itemName.toLowerCase();
+  for (const [key, value] of Object.entries(SHOP)) {
+    if (key.toLowerCase() === lowerName) {
+      return { name: key, item: value };
+    }
+  }
+  return null;
 }
 
 function getActionCoins() {
@@ -362,26 +368,26 @@ client.on('messageCreate', (message) => {
   if (message.content === '!help') {
     return message.reply(`🐻 Misi:
 
-!status - sprawdź status Misia
-!coins - sprawdź swoje monety
-!inv - sprawdź inventory
+🐻 !status - sprawdź status Misia
+💰 !coins - sprawdź swoje monety
+🎒 !inv - sprawdź inventory
 
 🛒 !shop - zobacz sklep
 🛍 !buy <item> - kup przedmiot
 
-🎮 !feed - nakarm Misia
-!play - baw się z Misiem
-!clean - umyj Misia
-!heal - ulecz Misia
-!calm - uspokój Misia (wymaga wysokich statystyk)
-!pray - pomódl się za Misia
-!taca - wyślij z tacą
-📊 !top coins - top 10 po monetach
-!top level - top 10 po levelach
-!dni - ile dni Misi zyje
-!gift @user monety - wyslij monety
+🍗 !feed - nakarm Misia
+🎾 !play - baw się z Misiem
+🧼 !clean - umyj Misia
+❤️ !heal - ulecz Misia
+😌 !calm - uspokój Misia (wymaga wysokich statystyk)
+🙏 !pray - pomódl się za Misia
+🧾 !taca - wyślij z tacą
+💰 !top coins - top 10 po monetach
+🏆 !top level - top 10 po levelach
+📅 !dni - ile dni Misi zyje
+💝 !gift @user monety - wyslij monety
 
-🎒 !use <item> - użyj przedmiot z inventory
+🎮 !use <item> - użyj przedmiot z inventory
 🐻 !adopt - adoptuj nowego Misia (po śmierci, po 24h)`);
   }
 
@@ -421,7 +427,7 @@ client.on('messageCreate', (message) => {
       embeds: [
         new EmbedBuilder()
           .setTitle("🍗 Nakarmił(a)ś Misiego!")
-          .setDescription(`**Głód:** ${before} → ${data.pet.hunger}\n**Otrzymano:** 💰 ${coins} monet\n\n${getPetMood()}`)
+          .setDescription(`**Głód:** ${Math.round(before)} → ${Math.round(data.pet.hunger)}\n**Otrzymano:** 💰 ${coins} monet\n\n${getPetMood()}`)
           .addFields({ name: "Głód", value: bar(data.pet.hunger), inline: false })
           .setColor(data.pet.hunger > 70 ? 0x00ff00 : data.pet.hunger > 40 ? 0xffff00 : 0xff0000)
       ]
@@ -447,7 +453,7 @@ client.on('messageCreate', (message) => {
       embeds: [
         new EmbedBuilder()
           .setTitle("🎾 Bawił(a)ś się z Misiem!")
-          .setDescription(`**Szczęście:** ${before} → ${data.pet.happiness}\n**Otrzymano:** 💰 ${coins + bonus} monet${bonus ? ` (w tym dodatkowe +${bonus} monet za szczęście!)` : ''}\n\n${getPetMood()}`)
+          .setDescription(`**Szczęście:** ${Math.round(before)} → ${Math.round(data.pet.happiness)}\n**Otrzymano:** 💰 ${coins + bonus} monet${bonus ? ` (w tym dodatkowe +${bonus} monet za szczęście!)` : ''}\n\n${getPetMood()}`)
           .addFields({ name: "Szczęście", value: bar(data.pet.happiness), inline: false })
           .setColor(data.pet.happiness > 70 ? 0x00ff00 : data.pet.happiness > 40 ? 0xffff00 : 0xff0000)
       ]
@@ -471,7 +477,7 @@ client.on('messageCreate', (message) => {
       embeds: [
         new EmbedBuilder()
           .setTitle("🧼 Umył(a)ś Misiego!")
-          .setDescription(`**Czystość:** ${before} → ${data.pet.cleanliness}\n**Otrzymano:** 💰 ${coins + bonus} monet${bonus ? ` (w tym dodatkowe +${bonus} monet za szczęście!)` : ''}\n\n${getPetMood()}`)
+          .setDescription(`**Czystość:** ${Math.round(before)} → ${Math.round(data.pet.cleanliness)}\n**Otrzymano:** 💰 ${coins + bonus} monet${bonus ? ` (w tym dodatkowe +${bonus} monet za szczęście!)` : ''}\n\n${getPetMood()}`)
           .addFields({ name: "Czystość", value: bar(data.pet.cleanliness), inline: false })
           .setColor(data.pet.cleanliness > 70 ? 0x00ff00 : data.pet.cleanliness > 40 ? 0xffff00 : 0xff0000)
       ]
@@ -494,7 +500,7 @@ client.on('messageCreate', (message) => {
       embeds: [
         new EmbedBuilder()
           .setTitle("❤️ Uleczył(a)ś Misiego!")
-          .setDescription(`**Zdrowie:** ${before} → ${data.pet.health}\n**Otrzymano:** 💰 ${coins} monet\n\n${getPetMood()}`)
+          .setDescription(`**Zdrowie:** ${Math.round(before)} → ${Math.round(data.pet.health)}\n**Otrzymano:** 💰 ${coins} monet\n\n${getPetMood()}`)
           .addFields({ name: "Zdrowie", value: bar(data.pet.health), inline: false })
           .setColor(data.pet.health > 70 ? 0x00ff00 : data.pet.health > 40 ? 0xffff00 : 0xff0000)
       ]
@@ -510,7 +516,7 @@ client.on('messageCreate', (message) => {
       const before = data.pet.anger;
       data.pet.anger = Math.max(0, data.pet.anger - 10);
       safeSave();
-      return message.reply(`😌 Uspokoiłeś Misia! Zdenerwowanie: ${before} → ${data.pet.anger}`);
+      return message.reply(`😌 Uspokoiłeś Misia! Zdenerwowanie: ${Math.round(before)} → ${Math.round(data.pet.anger)}`);
     }
 
     return message.reply('🛑 Aby uspokoić Misia, najpierw zadbaj o Głód, Szczęście i Czystość na poziomie powyżej 85.');
@@ -674,8 +680,10 @@ client.on('messageCreate', (message) => {
     const item = message.content.split(' ')[1];
     const u = data.users[userId];
 
-    if (!SHOP[item]) return message.reply("❌ Nie ma takiego przedmiotu!");
-    const shopItem = SHOP[item];
+    const foundItem = findShopItem(item);
+    if (!foundItem) return message.reply("❌ Nie ma takiego przedmiotu!");
+    const shopItem = foundItem.item;
+    const actualName = foundItem.name;
     
     if (u.coins < shopItem.price) return message.reply(`❌ Brak monet! Potrzebujesz ${shopItem.price - u.coins} więcej.`);
 
@@ -683,17 +691,17 @@ client.on('messageCreate', (message) => {
     if (shopItem.packFor) {
       u.inventory[shopItem.packFor] = (u.inventory[shopItem.packFor] || 0) + shopItem.packAmount;
     } else {
-      u.inventory[item] = (u.inventory[item]||0)+1;
+      u.inventory[actualName] = (u.inventory[actualName]||0)+1;
     }
 
     safeSave();
-    const inventoryName = shopItem.packFor || item;
+    const inventoryName = shopItem.packFor || actualName;
     const inventoryCount = u.inventory[inventoryName] || 0;
     
     return message.reply({
       embeds: [
         new EmbedBuilder()
-          .setTitle(`🛍 ${shopItem.emoji} Kupiłeś ${item}!`)
+          .setTitle(`🛍 ${shopItem.emoji} Kupiłeś ${actualName}!`)
           .setDescription(`**Cena:** ${shopItem.price} monet\n**W inventory:** ${inventoryCount} sztuka(i) ${shopItem.packFor ? `(${inventoryName})` : ''}\n**Pozostało monet:** ${u.coins}`)
           .setColor(0x00ff00)
       ]
@@ -723,14 +731,17 @@ client.on('messageCreate', (message) => {
     const item = message.content.split(' ')[1];
     const u = data.users[userId];
 
-    if (!u.inventory[item]) return message.reply("❌ Nie posiadasz tego przedmiotu!");
+    const foundItem = findShopItem(item);
+    if (!foundItem) return message.reply("❌ Nie ma takiego przedmiotu!");
+    const actualName = foundItem.name;
+    const shopItem = foundItem.item;
+
+    if (!u.inventory[actualName]) return message.reply("❌ Nie posiadasz tego przedmiotu!");
     
-    const cooldownCheck = checkItemCooldown(u, item);
+    const cooldownCheck = checkItemCooldown(u, actualName);
     if (!cooldownCheck.ok) return message.reply(cooldownCheck.msg);
 
-    u.inventory[item]--;
-    const shopItem = SHOP[item];
-
+    u.inventory[actualName]--;
     // Apply effects
     if (shopItem.hunger > 0) data.pet.hunger += shopItem.hunger;
     if (shopItem.happiness > 0) data.pet.happiness += shopItem.happiness;
@@ -741,7 +752,7 @@ client.on('messageCreate', (message) => {
     if (shopItem.possessedRemove) data.pet.possessed = false;
 
     clampPet();
-    u.itemCooldowns[item].push(Date.now());
+    u.itemCooldowns[actualName].push(Date.now());
     safeSave();
 
     const effects = [];
@@ -756,9 +767,9 @@ client.on('messageCreate', (message) => {
     return message.reply({
       embeds: [
         new EmbedBuilder()
-          .setTitle(`🎮 ${shopItem.emoji} Użyłeś ${item}!`)
+          .setTitle(`🎮 ${shopItem.emoji} Użyłeś ${actualName}!`)
           .setDescription(effects.join('\n') + `\n\n${getPetMood()}`)
-          .addFields({ name: 'W inventory:', value: `${u.inventory[item]} sztuka(i)`, inline: false })
+          .addFields({ name: 'W inventory:', value: `${u.inventory[actualName]} sztuka(i)`, inline: false })
           .setColor(0x9966ff)
       ]
     });
@@ -988,5 +999,10 @@ setInterval(() => {
   triggerRandomEvent(channel);
 }, EVENT_INTERVAL_MS);
 
-client.login(process.env.DISCORD_TOKEN);
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+if (!DISCORD_TOKEN) {
+  console.error('ERROR: Missing DISCORD_TOKEN environment variable. Set it in Railway variables.');
+  process.exit(1);
+}
+client.login(DISCORD_TOKEN);
 
