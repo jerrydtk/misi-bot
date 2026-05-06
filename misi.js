@@ -93,10 +93,6 @@ function save() {
   fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
 }
 
-function safeSave() {
-  clampPet();
-  save();
-}
 
 // 🧠 USER INIT
 function ensureUser(userId) {
