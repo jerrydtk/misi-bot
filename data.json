@@ -1,17 +1,22 @@
 {
   "pet": {
-    "hunger": 0,
-    "happiness": 0,
-    "health": 0,
-    "cleanliness": 0,
+    "hunger": 57.94444444444437,
+    "happiness": 44.88888888888875,
+    "health": 42.94444444444437,
+    "cleanliness": 37.94444444444437,
     "anger": 0,
-    "religion": 98.95833333333314,
-    "happinessLossSincePlay": 2.4999999999999987,
-    "lastPlayAt": 1777939784065,
+    "religion": 97.87037037036998,
+    "happinessLossSincePlay": 1.4444444444444855,
+    "lastPlayAt": 1778068278839,
     "possessed": false,
     "dead": false,
     "deathTime": null,
-    "zeroStatsTime": null
+    "zeroStatsTime": null,
+    "deathDoorTime": null,
+    "deathDoorReminderSent": false,
+    "survivalDays": 0,
+    "deathCount": 0,
+    "adoptedAt": 1778004622587
   },
   "users": {
     "276047431534379010": {
@@ -80,8 +85,8 @@
       }
     },
     "508375438620360719": {
-      "coins": 34,
-      "xp": 25,
+      "coins": 80,
+      "xp": 45,
       "level": 1,
       "inventory": {},
       "cooldowns": {
@@ -90,11 +95,15 @@
       },
       "itemCooldowns": {},
       "trust": 50,
-      "mood": "neutral"
+      "mood": "neutral",
+      "lastPlay": 1778064482769,
+      "lastFeed": 1778064487179,
+      "lastClean": 1778064488595,
+      "lastHeal": 1778064504648
     },
     "392411251147538432": {
-      "coins": 18,
-      "xp": 35,
+      "coins": 47,
+      "xp": 55,
       "level": 1,
       "inventory": {
         "lek": 0
@@ -111,22 +120,31 @@
         ]
       },
       "trust": 50,
-      "mood": "neutral"
+      "mood": "neutral",
+      "lastClean": 1778064298824,
+      "lastFeed": 1778064492235,
+      "lastPlay": 1778064493455,
+      "lastHeal": 1778064497260
     },
     "276039188103561216": {
-      "coins": 178,
-      "xp": 55,
+      "coins": 271,
+      "xp": 95,
       "level": 2,
       "inventory": {},
       "cooldowns": {
         "play": 1777923796423,
         "clean": 1777922392228,
         "heal": 1777923793567,
-        "feed": 1777923799836
+        "feed": 1777923799836,
+        "pray": 1778064353475
       },
       "itemCooldowns": {},
       "trust": 50,
-      "mood": "neutral"
+      "mood": "neutral",
+      "lastClean": 1778068313085,
+      "lastPray": 1778064353475,
+      "lastFeed": 1778068317074,
+      "lastHeal": 1778064356885
     },
     "357936864319111169": {
       "coins": 83,
@@ -151,9 +169,9 @@
     }
   },
   "alerts": {
-    "hunger": true,
-    "happiness": true,
-    "health": true,
-    "cleanliness": true
+    "hunger": false,
+    "happiness": false,
+    "health": false,
+    "cleanliness": false
   }
 }
