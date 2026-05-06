@@ -1,4 +1,4 @@
-﻿const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+﻿const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
 
 const client = new Client({
@@ -15,17 +15,20 @@ const ADMIN_ID = '276047431534379010'; // Zmień na swoje Discord ID
 // SHOP ITEMS
 const SHOP = {
   'jabłko': { emoji: '🍎', price: 10, type: 'food', hunger: 10, happiness: 0, health: 0, maxUsePerHour: 3, cooldown: 60000 },
-  'MisiChrupki': { emoji: '🥨', price: 15, type: 'food', hunger: 20, happiness: 5, health: 0, maxUsePerHour: 2, cooldown: 120000 },
-  'miód': { emoji: '🍯', price: 20, type: 'food', hunger: 15, happiness: 10, health: 5, maxUsePerHour: 2, cooldown: 120000 },
+  'MisiChrupki': { emoji: '🥨', price: 25, type: 'food', hunger: 20, happiness: 5, health: 0, maxUsePerHour: 2, cooldown: 120000 },
+  'miód': { emoji: '🍯', price: 40, type: 'food', hunger: 15, happiness: 10, health: 5, maxUsePerHour: 2, cooldown: 120000 },
   'woda': { emoji: '💧', price: 8, type: 'drink', hunger: 0, happiness: 5, health: 10, maxUsePerHour: 3, cooldown: 60000 },
-  'sok': { emoji: '🧃', price: 12, type: 'drink', hunger: 10, happiness: 10, health: 5, maxUsePerHour: 2, cooldown: 120000 },
-  'herbata': { emoji: '🍵', price: 15, type: 'drink', hunger: 0, happiness: 10, health: 15, maxUsePerHour: 2, cooldown: 120000 },
-  'karma': { emoji: '🐾', price: 50, type: 'food', hunger: 40, happiness: 15, health: 0, maxUsePerHour: 2, cooldown: 120000 },
-  'lek': { emoji: '💊', price: 40, type: 'medicine', hunger: 0, happiness: 0, health: 30, maxUsePerHour: 2, cooldown: 180000 },
-  'ibuprom': { emoji: '💊', price: 45, type: 'medicine', hunger: 0, happiness: 0, health: 35, maxUsePerHour: 2, cooldown: 180000 },
-  'altacet': { emoji: '🩹', price: 35, type: 'medicine', hunger: 0, happiness: 0, health: 25, maxUsePerHour: 2, cooldown: 180000 },
-  'witaminaC': { emoji: '🍊', price: 30, type: 'medicine', hunger: 0, happiness: 5, health: 20, maxUsePerHour: 2, cooldown: 180000 },
+  'sok': { emoji: '🧃', price: 15, type: 'drink', hunger: 10, happiness: 10, health: 5, maxUsePerHour: 2, cooldown: 120000 },
+  'herbata': { emoji: '🍵', price: 20, type: 'drink', hunger: 0, happiness: 10, health: 15, maxUsePerHour: 2, cooldown: 120000 },
+  'karma': { emoji: '🐾', price: 90, type: 'food', hunger: 40, happiness: 15, health: 0, maxUsePerHour: 2, cooldown: 120000 },
+  'lek': { emoji: '💊', price: 60, type: 'medicine', hunger: 0, happiness: 0, health: 30, maxUsePerHour: 2, cooldown: 180000 },
+  'ibuprom': { emoji: '💊', price: 70, type: 'medicine', hunger: 0, happiness: 0, health: 35, maxUsePerHour: 2, cooldown: 180000 },
+  'altacet': { emoji: '🩹', price: 50, type: 'medicine', hunger: 0, happiness: 0, health: 25, maxUsePerHour: 2, cooldown: 180000 },
+  'witaminaC': { emoji: '🍊', price: 35, type: 'medicine', hunger: 0, happiness: 5, health: 20, maxUsePerHour: 2, cooldown: 180000 },
   'mydło': { emoji: '🧼', price: 25, type: 'hygiene', hunger: 0, happiness: 0, cleanliness: 25, maxUsePerHour: 3, cooldown: 60000 },
+  'szampon': { emoji: '🧴', price: 30, type: 'hygiene', hunger: 0, happiness: 5, cleanliness: 35, maxUsePerHour: 2, cooldown: 120000 },
+  'ręcznik': { emoji: '🧽', price: 15, type: 'hygiene', hunger: 0, happiness: 3, cleanliness: 20, maxUsePerHour: 3, cooldown: 60000 },
+  'papier toaletowy': { emoji: '🧻', price: 12, type: 'hygiene', hunger: 0, happiness: 2, cleanliness: 15, maxUsePerHour: 4, cooldown: 45000 },
   'piłka': { emoji: '🎾', price: 30, type: 'toy', hunger: 0, happiness: 20, health: 0, maxUsePerHour: 1, cooldown: 300000 },
   'klocki': { emoji: '🧱', price: 45, type: 'toy', hunger: 0, happiness: 25, health: 0, maxUsePerHour: 1, cooldown: 300000 },
   'lego': { emoji: '🧱', price: 55, type: 'toy', hunger: 0, happiness: 30, health: 0, maxUsePerHour: 1, cooldown: 300000 },
@@ -33,11 +36,11 @@ const SHOP = {
   'samochodzik': { emoji: '🚗', price: 40, type: 'toy', hunger: 0, happiness: 22, health: 0, maxUsePerHour: 1, cooldown: 300000 },
   'snusy': { emoji: '🟫', price: 40, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 10, maxUsePerHour: 2, cooldown: 60000 },
   'e-fajka': { emoji: '🔋', price: 60, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 18, maxUsePerHour: 2, cooldown: 60000 },
-  'fajki': { emoji: '🚬', price: 20, type: 'drug', hunger: 0, happiness: 0, health: -2, angerReduce: 35, maxUsePerHour: 2, cooldown: 60000 },
-  'paczka Papierosów': { emoji: '📦', price: 180, type: 'drug', hunger: 0, happiness: 0, health: 0, packFor: 'fajki', packAmount: 10, maxUsePerHour: 1, cooldown: 60000 },
-  'krucyfiks': { emoji: '✝️', price: 500, type: 'religious', possessedRemove: true, maxUsePerHour: 1, cooldown: 60000 },
+  'fajka': { emoji: '🚬', price: 20, type: 'drug', hunger: 0, happiness: 0, health: -2, angerReduce: 35, maxUsePerHour: 2, cooldown: 60000 },
+  'paczka Papierosów': { emoji: '📦', price: 180, type: 'drug', hunger: 0, happiness: 0, health: 0, packFor: 'fajka', packAmount: 10, maxUsePerHour: 1, cooldown: 60000 },
+  'krucyfiks': { emoji: '✝️', price: 1500, type: 'religious', possessedRemove: true, maxUsePerHour: 1, cooldown: 60000 },
   'biblia': { emoji: '📖', price: 200, type: 'religious', religion: 15, maxUsePerHour: 2, cooldown: 120000 },
-  'box': { emoji: '🎁', price: 100, type: 'mystery', hunger: 30, happiness: 30, health: 20, maxUsePerHour: 1, cooldown: 600000 }
+  'box': { emoji: '🎁', price: 250, type: 'mystery', hunger: 30, happiness: 30, health: 20, maxUsePerHour: 1, cooldown: 600000 }
 };
 
 // DATA
@@ -106,7 +109,8 @@ function ensureUser(userId) {
       cooldowns: {},
       itemCooldowns: {},
       trust: 50,
-      mood: "neutral"
+      mood: "neutral",
+      coinsSpent: 0
     };
   }
 
@@ -114,6 +118,7 @@ function ensureUser(userId) {
   if (!u.inventory) u.inventory = {};
   if (!u.cooldowns) u.cooldowns = {};
   if (!u.itemCooldowns) u.itemCooldowns = {};
+  if (u.coinsSpent === undefined) u.coinsSpent = 0;
 }
 
 // 📊 CLAMP
@@ -148,10 +153,48 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// 🎨 HUD
-function bar(v) {
-  const n = Math.round(v / 10);
-  return "🟩".repeat(n) + "⬜".repeat(10 - n);
+function getLevelBonus(level) {
+  if (level >= 10) return 6;  // 10+ lvl = +6 monet
+  if (level >= 5) return 3;   // 5+ lvl = +3 monet
+  return 0;  // poniżej 5 lvl = bez bonusu
+}
+
+// 🎨 HUD - Ulepszone progress bary
+function bar(v, type = 'default') {
+  const percentage = Math.round(v);
+  const filled = Math.round(percentage / 10);
+  const empty = 10 - filled;
+  
+  // Kolory i emotikony w zależności od typu statystyki
+  const styles = {
+    hunger: { icon: '🍖', filled: '🟥', empty: '⬛' },
+    happiness: { icon: '😊', filled: '🟨', empty: '⬛' },
+    health: { icon: '❤️', filled: '🟩', empty: '⬛' },
+    cleanliness: { icon: '🧼', filled: '🟦', empty: '⬛' },
+    anger: { icon: '😡', filled: '🟧', empty: '⬛' },
+    religion: { icon: '✝️', filled: '🟪', empty: '⬛' },
+    default: { icon: '📊', filled: '🟩', empty: '⬛' }
+  };
+  
+  const style = styles[type] || styles.default;
+  const bar = style.filled.repeat(filled) + style.empty.repeat(empty);
+  const status = getStatusEmoji(percentage);
+  
+  return `${style.icon} ${bar} ${status} ${percentage}/100`;
+}
+
+function getStatusEmoji(percentage) {
+  if (percentage >= 80) return '✨';
+  if (percentage >= 60) return '👍';
+  if (percentage >= 40) return '😐';
+  if (percentage >= 20) return '😟';
+  return '⚠️';
+}
+
+function getStatColor(percentage) {
+  if (percentage >= 70) return 0x00ff00; // Zielony
+  if (percentage >= 40) return 0xffff00; // Żółty
+  return 0xff0000; // Czerwony
 }
 
 function petStatus() {
@@ -162,33 +205,110 @@ function petStatus() {
   const anger = Math.round(data.pet.anger);
   const religion = Math.round(data.pet.religion);
 
-  return `MISI STATUS
+  return `🐻 **MISI STATUS** 🐻
 
-Glod: ${bar(hunger)} ${hunger}/100
-Szczescie: ${bar(happiness)} ${happiness}/100
-Zdrowie: ${bar(health)} ${health}/100
-Czystosc: ${bar(cleanliness)} ${cleanliness}/100
-Zdenerwowanie: ${bar(anger)} ${anger}/100
-Religia: ${bar(religion)} ${religion}/100
+${bar(hunger, 'hunger')}
+${bar(happiness, 'happiness')}
+${bar(health, 'health')}
+${bar(cleanliness, 'cleanliness')}
+${bar(anger, 'anger')}
+${bar(religion, 'religion')}
 
-💀 Liczba śmierci: ${data.pet.deathCount}`;
+💀 **Liczba śmierci:** ${data.pet.deathCount}`;
 }
 
-// STATUS DESCRIPTIONS
+// 🎮 INTERAKTYWNE PRZYCISKI
+function createActionButtons(userId) {
+  const now = Date.now();
+  const user = data.users[userId] || {};
+  
+  // Sprawdź cooldowny
+  const feedCooldown = user.lastFeed && (now - user.lastFeed < 600000);
+  const playCooldown = user.lastPlay && (now - user.lastPlay < 600000);
+  const cleanCooldown = user.lastClean && (now - user.lastClean < 600000);
+  const healCooldown = user.lastHeal && (now - user.lastHeal < 600000);
+  
+  const row = new ActionRowBuilder()
+    .addComponents(
+      new ButtonBuilder()
+        .setCustomId('feed')
+        .setLabel(feedCooldown ? '⏳ Odczekaj' : '🍖 Nakarm')
+        .setStyle(feedCooldown ? ButtonStyle.Secondary : ButtonStyle.Success)
+        .setDisabled(feedCooldown),
+      new ButtonBuilder()
+        .setCustomId('play')
+        .setLabel(playCooldown ? '⏳ Odczekaj' : '🎾 Baw się')
+        .setStyle(playCooldown ? ButtonStyle.Secondary : ButtonStyle.Primary)
+        .setDisabled(playCooldown),
+      new ButtonBuilder()
+        .setCustomId('clean')
+        .setLabel(cleanCooldown ? '⏳ Odczekaj' : '🧼 Umyj')
+        .setStyle(cleanCooldown ? ButtonStyle.Secondary : ButtonStyle.Secondary)
+        .setDisabled(cleanCooldown),
+      new ButtonBuilder()
+        .setCustomId('heal')
+        .setLabel(healCooldown ? '⏳ Odczekaj' : '❤️ Ulecz')
+        .setStyle(healCooldown ? ButtonStyle.Secondary : ButtonStyle.Danger)
+        .setDisabled(healCooldown)
+    );
+  return row;
+}
+
+function createStatusEmbed(userId) {
+  const u = data.users[userId];
+  const overallStatus = Math.round((data.pet.hunger + data.pet.happiness + data.pet.health + data.pet.cleanliness) / 4);
+  const statusEmoji = data.pet.dead ? '💀' : (overallStatus >= 70 ? '😊' : overallStatus >= 40 ? '😐' : '😟');
+  
+  return new EmbedBuilder()
+    .setTitle(`🐻 Status Misia ${statusEmoji}`)
+    .setDescription(petStatus())
+    .setThumbnail('https://cdn.discordapp.com/attachments/1234567890/1234567890/bear.png') // Można zmienić na prawdziwy obrazek
+    .setColor(data.pet.dead ? 0x000000 : getStatColor(overallStatus))
+    .addFields(
+      { name: '👤 Użytkownik', value: `<@${userId}>`, inline: true },
+      { name: '💰 Monety', value: `${u.coins}`, inline: true },
+      { name: '🏆 Level', value: `${u.level}`, inline: true },
+      { name: '📈 XP', value: `${u.xp}/${(u.level + 1) * 50}`, inline: true },
+      { name: '🎯 Ogólny status', value: `${overallStatus}%`, inline: true },
+      { name: '⏰ Ostatnia akcja', value: getLastAction(userId), inline: true }
+    )
+    .setFooter({ text: 'Użyj przycisków poniżej lub komend !feed, !play, !clean, !heal', iconURL: client.user.displayAvatarURL() })
+    .setTimestamp();
+}
+
+function getLastAction(userId) {
+  const u = data.users[userId];
+  const actions = [];
+  if (u.lastFeed) actions.push(`🍖 ${getTimeAgo(u.lastFeed)}`);
+  if (u.lastPlay) actions.push(`🎾 ${getTimeAgo(u.lastPlay)}`);
+  if (u.lastClean) actions.push(`🧼 ${getTimeAgo(u.lastClean)}`);
+  if (u.lastHeal) actions.push(`❤️ ${getTimeAgo(u.lastHeal)}`);
+  return actions.length > 0 ? actions.slice(-2).join(', ') : 'Brak';
+}
+
+function getTimeAgo(timestamp) {
+  const now = Date.now();
+  const diff = now - timestamp;
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return 'teraz';
+  if (minutes < 60) return `${minutes}min temu`;
+  const hours = Math.floor(minutes / 60);
+  return `${hours}h temu`;
+}
 function getPetMood() {
   const statuses = [];
   
   if (data.pet.hunger < 40) statuses.push("Misi jest jeszcze glodny...");
-  if (data.pet.hunger < 20) statuses.push("MISI UMIERA Z GŁODU!");
+  if (data.pet.hunger < 15) statuses.push("MISI UMIERA Z GŁODU!");
   
   if (data.pet.happiness < 40) statuses.push("Misi jest smutny...");
-  if (data.pet.happiness < 20) statuses.push("MISI JEST BARDZO SMUTNY!");
+  if (data.pet.happiness < 15) statuses.push("MISI JEST BARDZO SMUTNY!");
   
   if (data.pet.health < 40) statuses.push("Misi źle się czuje...");
-  if (data.pet.health < 20) statuses.push("MISI SIĘ ŹLE CZUJE!");
+  if (data.pet.health < 15) statuses.push("MISI SIĘ ŹLE CZUJE!");
   
   if (data.pet.cleanliness < 40) statuses.push("Misi jest brudny...");
-  if (data.pet.cleanliness < 20) statuses.push("MISI JEST BARDZO BRUDNY!");
+  if (data.pet.cleanliness < 15) statuses.push("MISI JEST BARDZO BRUDNY!");
   
   if (data.pet.anger > 60) statuses.push("Misi jest zdenerwowany...");
   if (data.pet.anger > 85) statuses.push("Misi jest bardzo zdenerwowany!");
@@ -424,23 +544,108 @@ function checkItemCooldown(user, item) {
   return { ok: true };
 }
 
-// 🧠 AI
+// 🧠 AI - Rozszerzone odpowiedzi
 function aiReply(message) {
   const t = message.content.toLowerCase();
 
-  const map = [
-    { k: ["hej","siema","cześć"], r: "🐻 Misi się cieszy!" },
-    { k: ["kocham"], r: "🐻 Misi też ❤️" },
-    { k: ["głodny"], r: "🐻 Misi chce jeść 🍗" },
-    { k: ["nuda"], r: "🐻 Pobaw się ze mną 🎾" }
+  // Powitania i podstawowe interakcje
+  const greetings = [
+    { k: ["hej","siema","cześć","witam","elo","jak sie masz"], r: "🐻 Misi się cieszy!" },
+    { k: ["kocham","kocham misia","missie kocham"], r: "🐻 Misi też ❤️" },
+    { k: ["dzień dobry","dzien dobry","good morning"], r: "🐻 Dobry dzień! 🌞" },
+    { k: ["dobranoc","good night"], r: "🐻 Dobranoc! 🌙" }
   ];
 
-  for (const m of map) {
-    if (m.k.some(x => t.includes(x))) return message.reply(m.r);
+  // Potrzeby Misia
+  const needs = [
+    { k: ["głodny","mis jest glodny","jestem glodny","misi glodny"], r: "🐻 Misi chce jeść 🍗" },
+    { k: ["nuda","jest nudno","mis jest nudny","pobaw sie"], r: "🐻 Pobaw się ze mną 🎾" },
+    { k: ["pragnie","chce pic","mis jest spragniony"], r: "🐻 Misi chce pić! 💧" },
+    { k: ["śpi","mis spi","spij misiu"], r: "🐻 Misi śpi... zzz 💤" }
+  ];
+
+  // Jedzenie i przepisy
+  const food = [
+    { k: ["daj mi przepis na pierogi","przepis na pierogi","jak zrobic pierogi"], r: "🐻 Oto przepis na pierogi Misia:\n🥟 Składniki: mąka, woda, ser, ziemniaki\n👨‍🍳 Przygotuj ciasto i farsz\n🥟 Gotuj przez 15 minut\n🍽 Smacznego!" },
+    { k: ["co jes misiu","co lubisz jesc","mis co lubisz"], r: "🐻 Misi lubi: 🍯 miód, 🍎 jabłka, 🥨 chrupki!" },
+    { k: ["zrob mi kanapke","kanapka","zrob kanapke"], r: "🐻 Misi robi kanapkę! 🥪🧀🥬" },
+    { k: ["pizza","lubie pizze","chce pizze"], r: "🐻 Misi kocha pizzę! 🍕🧀🍕" }
+  ];
+
+  // Zabawa i aktywności
+  const activities = [
+    { k: ["pobawmy sie","zabawa","chce sie bawic"], r: "🐻 TAK! Zabawa! 🎾🎮🎲" },
+    { k: ["oglądajmy film","film","serial"], r: "🐻 Misi chce oglądać film! 🎬🍿" },
+    { k: ["sluchajmy muzyki","muzyka","piosenka"], r: "🐻 Misi tańczy! 🎵💃🕺" },
+    { k: ["czytajmy","ksiazka","opowiadanie"], r: "🐻 Misi słucha bajki! 📖📚" }
+  ];
+
+  // Pytania i rozmowa
+  const questions = [
+    { k: ["jak sie masz","co u ciebie","jak misi"], r: "🐻 Misi czuje się " + (data.pet.happiness > 70 ? 'świetnie! 😊' : data.pet.happiness > 40 ? 'dobrze 😐' : 'słabo 😟') },
+    { k: ["ile masz lat","wiek misia","stary misi"], r: "🐻 Misi jest wiecznie młody! 🐻‍♂️" },
+    { k: ["gdzie jestes","mis gdzie jestes"], r: "🐻 Misi jest tutaj! Z tobą! 🐻" },
+    { k: ["co robisz","co misi robi"], r: "🐻 Misi myśli o życiu... 🤔" }
+  ];
+
+  // Specjalne odpowiedzi zależne od statystyk
+  const statBased = [
+    { 
+      k: ["jestem glodny","mis glodny"], 
+      condition: () => data.pet.hunger < 30,
+      r: "🐻 Misi jest bardzo głodny! 🍗🍗🍗" 
+    },
+    { 
+      k: ["jestem smutny","mis smutny"], 
+      condition: () => data.pet.happiness < 30,
+      r: "🐻 Misi jest smutny... Potrzebuje przytulenia! 🤗" 
+    },
+    { 
+      k: ["jestem chory","mis chory"], 
+      condition: () => data.pet.health < 30,
+      r: "🐻 Misi jest chory... Potrzebuje lekarstwa! 💊" 
+    }
+  ];
+
+  // Sprawdź wszystkie kategorie
+  const allMaps = [...greetings, ...needs, ...food, ...activities, ...questions];
+  
+  for (const m of allMaps) {
+    if (m.k.some(x => t.includes(x))) {
+      if (m.condition && !m.condition()) continue; // Pomiń jeśli warunek nie spełniony
+      return message.reply(m.r);
+    }
   }
 
-  if (Math.random() < 0.05) {
-    return message.reply("🐻 Misi patrzy...");
+  // Sprawdź odpowiedzi zależne od statystyk
+  for (const m of statBased) {
+    if (m.k.some(x => t.includes(x))) {
+      if (m.condition && !m.condition()) continue;
+      return message.reply(m.r);
+    }
+  }
+
+  // Losowe odpowiedzi (zwiększona szansa)
+  const randomResponses = [
+    "🐻 Misi mruczy... 🐾",
+    "🐻 Misi macha łapką! 👋",
+    "🐻 Misi się rozciąga! 🐾",
+    "🐻 Misi patrzy z ciekawością... 👀",
+    "🐻 Misi chce przytulenia! 🤗",
+    "🐻 Misi goni za ogonem! 🐾",
+    "🐻 Misi drapie się za uchem 🐾",
+    "🐻 Misi ziewa! 💤",
+    "🐻 Misi merda! 🐾",
+    "🐻 Misi chce spać! 😴",
+    "🐻 Misi jest głodny... 🍗",
+    "🐻 Misi marzy o miodzie! 🍯",
+    "🐻 Misi myśli o Tobie! 💭",
+    "🐻 Misi idzie zapalić fajkę 🚬"
+  ];
+
+  if (Math.random() < 0.15) { // Zwiększona szansa z 5% do 15%
+    const randomResponse = randomResponses[Math.floor(Math.random() * randomResponses.length)];
+    return message.reply(randomResponse);
   }
 }
 
@@ -452,8 +657,10 @@ function reward(userId, coins, xp, msg) {
   u.coins += coins;
   u.xp += xp;
 
-  while (u.xp >= u.level * 50) {
-    u.xp -= u.level * 50;
+  // Calculate XP needed for next level: Level 2 = 100, Level 3 = 150, Level 4 = 200, etc.
+  while (u.xp >= (u.level + 1) * 50) {
+    const xpNeededForNextLevel = (u.level + 1) * 50;
+    u.xp -= xpNeededForNextLevel;
     u.level++;
     msg.channel.send(`🏆 LEVEL UP → ${u.level}`);
   }
@@ -462,7 +669,7 @@ function reward(userId, coins, xp, msg) {
 }
 
 // 💬 BOT
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
   if (!message.guild || message.author.bot) return;
 
   const channel = message.guild.channels.cache.find(
@@ -601,44 +808,63 @@ client.on('messageCreate', (message) => {
   if (!message.content.startsWith('!')) aiReply(message);
 
   if (message.content === '!help') {
-    return message.reply(`🐻 Misi:
+    return message.reply(`🐻 **Misi Bot - Komendy:**
 
-🐻 !status - sprawdź status Misia
-💰 !coins - sprawdź swoje monety
-🎒 !inv - sprawdź inventory
+� **Status i Statystyki:**
+�� !status - sprawdź status Misia i swoje statystyki
+💰 !coins - sprawdź swoje monety i XP
+🎒 !inv - sprawdź swoje inventory
+📅 !dni - sprawdź ile dni Misi żyje
 
-🛒 !shop - zobacz sklep
-🛍 !buy <item> - kup przedmiot
+🛒 **Sklep:**
+🛒 !shop - zobacz wszystkie dostępne przedmioty
+🛍 !buy <przedmiot> - kup przedmiot za monety
 
-🍗 !feed - nakarm Misia
-🎾 !play - baw się z Misiem
-🧼 !clean - umyj Misia
-❤️ !heal - ulecz Misia
-😌 !calm - uspokój Misia (wymaga wysokich statystyk)
-🙏 !pray - pomódl się za Misia
-🧾 !taca - wyślij z tacą
-💰 !top coins - top 10 po monetach
-🏆 !top level - top 10 po levelach
-📅 !dni - ile dni Misi zyje
-💝 !gift @user monety - wyslij monety
+� **Przedmioty:**
+🎮 !use <przedmiot> - użyj przedmiot z inventory
 
-🎮 !use <item> - użyj przedmiot z inventory
-🐻 !adopt - adoptuj nowego Misia (po śmierci, po 6h)`);
+�� **Opieka nad Misim:**
+🍗 !feed - nakarm Misia (5-20 monet + bonus levelowy, 5 XP)
+🎾 !play - baw się z Misiem (5-20 monet + bonus levelowy, 5 XP)
+🧼 !clean - umyj Misia (5-20 monet + bonus levelowy, 5 XP)
+❤️ !heal - ulecz Misia (5-20 monet + bonus levelowy, 5 XP)
+
+🙏 **Religia i Spokój:**
+🙏 !pray - pomódl się za Misia (+5 religii, 30 min cooldown)
+😌 !calm - uspokój Misia (wymaga >85 statystyk)
+🧾 !taca - wyślij z tacą (losowe monety, wymaga >80 religii)
+
+🏆 **Rankingi:**
+💰 !top coins - top 10 użytkowników wg wydatków w sklepie
+🏆 !top level - top 10 użytkowników wg leveli i XP
+
+💰 **Interakcje:**
+💝 !gift @user kwota - wyślij monety innemu użytkownikowi
+
+🔄 **Admin:**
+🚨 !restore - przywróć Misia do życia (emergency)
+🔫 !kill - zabij Misia (admin only)
+
+🐻 **Adopcja:**
+🐻 !adopt - adoptuj nowego Misia (po śmierci, 6h cooldown)
+
+**⚡ System Levelowy i Bonusy:**
+- 5 XP za każdą akcję
+- Level 2: 100 XP potrzebne
+- Level 3: 150 XP potrzebne  
+- Level 4: 200 XP potrzebne
+- Bonusy monetowe: 0 monet (lvl 1-4), +3 monety (lvl 5-9), +6 monet (lvl 10+)
+
+**🛡️ Bezpieczeństwo:**
+- Automatyczne backupy co 6 godzin
+- Pełna walidacja danych
+- System logowania i monitorowania`);
   }
 
   if (message.content === '!status') {
-    const u = data.users[userId];
-
     return message.reply({
-      embeds: [
-        new EmbedBuilder()
-          .setTitle("🐻 Misi")
-          .setDescription(petStatus())
-          .addFields(
-            { name: "💰 Coins", value: `${u.coins}`, inline: true },
-            { name: "🏆 Level", value: `${u.level}`, inline: true }
-          )
-      ]
+      embeds: [createStatusEmbed(userId)],
+      components: [createActionButtons(userId)]
     });
   }
 
@@ -656,25 +882,22 @@ client.on('messageCreate', (message) => {
     const now = Date.now();
     const lastFeed = data.users[userId].lastFeed || 0;
     if (now - lastFeed < 600000) { // 10 minut cooldown
-      // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
-      setTimeout(() => {
-        message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym karmieniem Misia! 🍗`);
-      }, 3000);
-      return message.reply("⏳ Poczekaj 10 minut przed kolejnym karmieniem!");
+      const remainingMs = 600000 - (now - lastFeed);
+      const totalSeconds = Math.ceil(remainingMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return message.reply(`⏳ Poczekaj ${minutes}m ${seconds}s przed kolejnym karmieniem!`);
     }
 
     const feedBefore = data.pet.hunger;
     data.pet.hunger = Math.min(100, data.pet.hunger + 15);
   clampPet();
 
-  // Losowanie monet 5-20 + bonus 12% na 1-6
+  // Losowanie monet 5-20 + bonus za level
   const feedCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
-  let feedBonus = 0;
-  if (Math.random() < 0.12) { // 12% szansa
-    feedBonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
-  }
+  const levelBonus = getLevelBonus(data.users[userId].level); // bonus za level
   
-  data.users[userId].coins += feedCoins + feedBonus;
+  data.users[userId].coins += feedCoins + levelBonus;
   data.users[userId].xp += 5;
   data.users[userId].lastFeed = now; // zapisz czas karmienia
 
@@ -684,11 +907,11 @@ client.on('messageCreate', (message) => {
     embeds: [
       new EmbedBuilder()
         .setTitle("🍗 Nakarmiłeś Misia!")
-        .setDescription(`**Głód:** ${Math.round(feedBefore)} → ${Math.round(data.pet.hunger)}\n**Otrzymano:** 💰 ${feedCoins} monet${feedBonus > 0 ? ` + bonus ${feedBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
+        .setDescription(`**Głód:** ${Math.round(feedBefore)} → ${Math.round(data.pet.hunger)}\n**Otrzymano:** 💰 ${feedCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Głód", value: bar(data.pet.hunger), inline: false },
-          { name: "💰 Szansa bonusu", value: "12%", inline: true },
-          { name: "🎲 Zakres monet", value: "5-20", inline: true }
+          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.hunger > 70 ? 0x00ff00 : data.pet.hunger > 40 ? 0xffff00 : 0xff0000)
     ]
@@ -710,11 +933,11 @@ client.on('messageCreate', (message) => {
     const now = Date.now();
     const lastPlay = data.users[userId].lastPlay || 0;
     if (now - lastPlay < 600000) { // 10 minut cooldown
-      // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
-      setTimeout(() => {
-        message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejną zabawą z Misiem! 🎾`);
-      }, 3000);
-      return message.reply("⏳ Poczekaj 10 minut przed kolejną zabawą!");
+      const remainingMs = 600000 - (now - lastPlay);
+      const totalSeconds = Math.ceil(remainingMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return message.reply(`⏳ Poczekaj ${minutes}m ${seconds}s przed kolejną zabawą!`);
     }
 
     const playBefore = data.pet.happiness;
@@ -723,14 +946,11 @@ client.on('messageCreate', (message) => {
   data.pet.lastPlayAt = Date.now();
   clampPet();
 
-  // Losowanie monet 5-20 + bonus 12% na 1-6
+  // Losowanie monet 5-20 + bonus za level
   const playCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
-  let playBonus = 0;
-  if (Math.random() < 0.12) { // 12% szansa
-    playBonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
-  }
+  const levelBonus = getLevelBonus(data.users[userId].level); // bonus za level
   
-  data.users[userId].coins += playCoins + playBonus;
+  data.users[userId].coins += playCoins + levelBonus;
   data.users[userId].xp += 5;
 
   safeSave();
@@ -739,11 +959,11 @@ client.on('messageCreate', (message) => {
     embeds: [
       new EmbedBuilder()
         .setTitle("🎾 Bawiłeś się z Misiem!")
-        .setDescription(`**Szczęście:** ${Math.round(playBefore)} → ${Math.round(data.pet.happiness)}\n**Otrzymano:** 💰 ${playCoins} monet${playBonus > 0 ? ` + bonus ${playBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
+        .setDescription(`**Szczęście:** ${Math.round(playBefore)} → ${Math.round(data.pet.happiness)}\n**Otrzymano:** 💰 ${playCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Szczęście", value: bar(data.pet.happiness), inline: false },
-          { name: "💰 Szansa bonusu", value: "12%", inline: true },
-          { name: "🎲 Zakres monet", value: "5-20", inline: true }
+          { name: "� Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.happiness > 70 ? 0x00ff00 : data.pet.happiness > 40 ? 0xffff00 : 0xff0000)
     ]
@@ -765,27 +985,22 @@ client.on('messageCreate', (message) => {
     const now = Date.now();
     const lastClean = data.users[userId].lastClean || 0;
     if (now - lastClean < 600000) { // 10 minut cooldown
-      // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
-      setTimeout(() => {
-        message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym czyszczeniem Misia! 🧼`);
-      }, 3000);
-      return message.reply("⏳ Poczekaj 10 minut przed kolejnym czyszczeniem!");
+      const remainingMs = 600000 - (now - lastClean);
+      const totalSeconds = Math.ceil(remainingMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return message.reply(`⏳ Poczekaj ${minutes}m ${seconds}s przed kolejnym czyszczeniem!`);
     }
 
     const cleanBefore = data.pet.cleanliness;
     data.pet.cleanliness = Math.min(100, data.pet.cleanliness + 10);
   clampPet();
 
-  // Losowanie monet 5-20
+  // Losowanie monet 5-20 + bonus za level
   const cleanCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
-  
-  // Szansa 12% na dodatkowe monety 1-6
-  let cleanBonus = 0;
-  if (Math.random() < 0.12) { // 12% szansa
-    cleanBonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
-  }
+  const levelBonus = getLevelBonus(data.users[userId].level); // bonus za level
 
-  data.users[userId].coins += cleanCoins + cleanBonus;
+  data.users[userId].coins += cleanCoins + levelBonus;
   data.users[userId].xp += 5;
   data.users[userId].lastClean = now; // zapisz czas czyszczenia
 
@@ -795,11 +1010,11 @@ client.on('messageCreate', (message) => {
     embeds: [
       new EmbedBuilder()
         .setTitle("🧼 Umył(a)ś Misiego!")
-        .setDescription(`**Czystość:** ${Math.round(cleanBefore)} → ${Math.round(data.pet.cleanliness)}\n**Otrzymano:** 💰 ${cleanCoins} monet${cleanBonus > 0 ? ` + bonus ${cleanBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
+        .setDescription(`**Czystość:** ${Math.round(cleanBefore)} → ${Math.round(data.pet.cleanliness)}\n**Otrzymano:** 💰 ${cleanCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Czystość", value: bar(data.pet.cleanliness), inline: false },
-          { name: "💰 Szansa bonusu", value: "12%", inline: true },
-          { name: "🎲 Zakres monet", value: "5-20", inline: true }
+          { name: "� Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.cleanliness > 70 ? 0x00ff00 : data.pet.cleanliness > 40 ? 0xffff00 : 0xff0000)
     ]
@@ -821,25 +1036,22 @@ client.on('messageCreate', (message) => {
     const now = Date.now();
     const lastHeal = data.users[userId].lastHeal || 0;
     if (now - lastHeal < 600000) { // 10 minut cooldown
-      // Dodatkowa ochrona antyspamowa - wiadomość o cooldownzie
-      setTimeout(() => {
-        message.channel.send(`⏰ ${message.author.username} poczekaj jeszcze 10 minut przed kolejnym leczeniem Misia! ❤️`);
-      }, 3000);
-      return message.reply("⏳ Poczekaj 10 minut przed kolejnym leczeniem!");
+      const remainingMs = 600000 - (now - lastHeal);
+      const totalSeconds = Math.ceil(remainingMs / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return message.reply(`⏳ Poczekaj ${minutes}m ${seconds}s przed kolejnym leczeniem!`);
     }
 
     const healBefore = data.pet.health;
     data.pet.health = Math.min(100, data.pet.health + 15);
   clampPet();
 
-  // Losowanie monet 5-20 + bonus 12% na 1-6
+  // Losowanie monet 5-20 + bonus za level
   const healCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
-  let healBonus = 0;
-  if (Math.random() < 0.12) { // 12% szansa
-    healBonus = Math.floor(Math.random() * 6) + 1; // 1-6 dodatkowych monet
-  }
+  const levelBonus = getLevelBonus(data.users[userId].level); // bonus za level
   
-  data.users[userId].coins += healCoins + healBonus;
+  data.users[userId].coins += healCoins + levelBonus;
   data.users[userId].xp += 5;
   data.users[userId].lastHeal = now; // zapisz czas leczenia
 
@@ -849,11 +1061,11 @@ client.on('messageCreate', (message) => {
     embeds: [
       new EmbedBuilder()
         .setTitle("❤️ Uleczyłeś Misia!")
-        .setDescription(`**Zdrowie:** ${Math.round(healBefore)} → ${Math.round(data.pet.health)}\n**Otrzymano:** 💰 ${healCoins} monet${healBonus > 0 ? ` + bonus ${healBonus} dodatkowych!` : ''}\n\n${getPetMood()}`)
+        .setDescription(`**Zdrowie:** ${Math.round(healBefore)} → ${Math.round(data.pet.health)}\n**Otrzymano:** 💰 ${healCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Zdrowie", value: bar(data.pet.health), inline: false },
-          { name: "💰 Szansa bonusu", value: "12%", inline: true },
-          { name: "🎲 Zakres monet", value: "5-20", inline: true }
+          { name: "� Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.health > 70 ? 0x00ff00 : data.pet.health > 40 ? 0xffff00 : 0xff0000)
     ]
@@ -877,16 +1089,45 @@ client.on('messageCreate', (message) => {
       const before = data.pet.anger;
       data.pet.anger = Math.max(0, data.pet.anger - 10);
       safeSave();
-      return message.reply(`😌 Uspokoiłeś Misia! Zdenerwowanie: ${Math.round(before)} → ${Math.round(data.pet.anger)}`);
+      return message.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle("😌 Usunięto zdenerwowanie Misia")
+            .setDescription(`Udało Ci się uspokoić Misia!\n\n**Zdenerwowanie:** ${Math.round(before)} → ${Math.round(data.pet.anger)} (-10)\n\n${getPetMood()}`)
+            .addFields(
+              { name: "😡 Zdenerwowanie", value: bar(data.pet.anger), inline: false },
+              { name: "📜 Efekt", value: "-10 do Zdenerwowania", inline: true },
+              { name: "⏰ Cooldown", value: "10 minut", inline: true }
+            )
+            .setColor(data.pet.anger < 30 ? 0x00ff00 : data.pet.anger < 60 ? 0xffff00 : 0xff6347)
+            .setTimestamp()
+        ]
+      });
     }
 
-    return message.reply('🛑 Aby uspokoić Misia, najpierw zadbaj o Głód, Szczęście i Czystość na poziomie powyżej 85.');
+    return message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("🛑 Nie można uspokoić Misia")
+          .setDescription("Aby uspokoić Misia, najpierw zadbaj o jego podstawowe potrzeby!")
+          .addFields(
+            { name: "🍗 Wymagany Głód", value: `> 85 (masz: ${Math.round(data.pet.hunger)})`, inline: true },
+            { name: "😄 Wymagane Szczęście", value: `> 85 (masz: ${Math.round(data.pet.happiness)})`, inline: true },
+            { name: "🧼 Wymagana Czystość", value: `> 85 (masz: ${Math.round(data.pet.cleanliness)})`, inline: true }
+          )
+          .setColor(0xff6347)
+          .setTimestamp()
+      ]
+    });
   }
-  // 🙏 PRAY - Z COOLDOWNEM 5 GODZIN
+  // 🙏 PRAY - Z COOLDOWNEM 30 Minut
   if (message.content === '!pray') {
     if (data.pet.dead) {
       return message.reply("❌ Misi nie żyje! Użyj `!adopt` lub `!restore`.");
     }
+    
+    const cd = canUse(userId, 'pray', 1800000); // 30 minut cooldown
+    if (!cd.ok) return message.reply(cd.msg);
     
     const now = Date.now();
     const lastPray = data.users[userId].lastPray || 0;
@@ -896,19 +1137,33 @@ client.on('messageCreate', (message) => {
 
     data.users[userId].lastPray = now; // zapisz czas modlitwy
 
+    const before = data.pet.religion;
     data.pet.religion += 5;
     clampPet();
     safeSave();
 
-    return message.reply('🙏 Pomodliłeś się za Misia! Religia +5');
+    return message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("🙏 Modlitwa za Misia")
+          .setDescription(`Twoja modlitwa została wysłuchana!\n\n**Religia:** ${Math.round(before)} → ${Math.round(data.pet.religion)} (+5)\n\n${getPetMood()}`)
+          .addFields(
+            { name: "⛪ Religia", value: bar(data.pet.religion), inline: false },
+            { name: "📜 Efekt", value: "+5 do Religii", inline: true },
+            { name: "⏰ Cooldown", value: "30 minut", inline: true }
+          )
+          .setColor(data.pet.religion > 70 ? 0x00ff00 : data.pet.religion > 40 ? 0xffff00 : 0xff6347)
+          .setTimestamp()
+      ]
+    });
   }
   // 🧾 TACA
   if (message.content === '!taca') {
     const cd = canUse(userId, 'taca', 43200000);
     if (!cd.ok) return message.reply(cd.msg);
 
-    if (data.pet.religion <= 99) {
-      return message.reply('🛑 Religia musi być powyżej 99, żeby dać tacę.');
+    if (data.pet.religion <= 80) {
+      return message.reply('🛑 Religia musi być powyżej 80, żeby wysłać z tacą');
     }
 
     const coins = Math.floor(Math.random() * 51);
@@ -922,13 +1177,13 @@ client.on('messageCreate', (message) => {
 
   // TOP LEADERBOARD
   if (message.content === '!top coins') {
-    const sorted = Object.entries(data.users).sort((a, b) => b[1].coins - a[1].coins).slice(0, 10);
-    const list = sorted.map((entry, i) => `${i + 1}. <@${entry[0]}> - ${entry[1].coins} monet`).join('\n');
+    const sorted = Object.entries(data.users).sort((a, b) => b[1].coinsSpent - a[1].coinsSpent).slice(0, 10);
+    const list = sorted.map((entry, i) => `${i + 1}. <@${entry[0]}> - ${entry[1].coinsSpent} monet wydanych`).join('\n');
     
     return message.reply({
       embeds: [
         new EmbedBuilder()
-          .setTitle('💰 TOP 10 - MONETY')
+          .setTitle('💰 TOP 10 - WYDATKI W SKLEPIE')
           .setDescription(list || 'Brak danych')
           .setColor(0xffd700)
       ]
@@ -937,7 +1192,11 @@ client.on('messageCreate', (message) => {
 
   if (message.content === '!top level') {
     const sorted = Object.entries(data.users).sort((a, b) => b[1].level - a[1].level).slice(0, 10);
-    const list = sorted.map((entry, i) => `${i + 1}. <@${entry[0]}> - Level ${entry[1].level}`).join('\n');
+    const list = sorted.map((entry, i) => {
+      const user = entry[1];
+      const xpNeeded = (user.level + 1) * 50;
+      return `${i + 1}. <@${entry[0]}> - Level ${user.level} (${user.xp}/${xpNeeded} XP)`;
+    }).join('\n');
     
     return message.reply({
       embeds: [
@@ -978,7 +1237,21 @@ client.on('messageCreate', (message) => {
       return message.reply(`❌ Nie masz tyle monet! Masz: ${data.users[userId].coins}`);
     }
 
+    if (targetId === userId) {
+      return message.reply('❌ Nie możesz wysłać monet samemu sobie!');
+    }
+
     ensureUser(targetId);
+    
+    try {
+      const targetUser = await client.users.fetch(targetId);
+      if (!targetUser) {
+        return message.reply('❌ Nie znaleziono użytkownika!');
+      }
+    } catch (error) {
+      return message.reply('❌ Nie znaleziono użytkownika!');
+    }
+
     data.users[userId].coins -= amount;
     data.users[targetId].coins += amount;
     safeSave();
@@ -1006,7 +1279,7 @@ client.on('messageCreate', (message) => {
     ).join('\n');
     
     const hygieneItems = Object.entries(SHOP).filter(([,v]) => v.type.includes('hygiene')).map(([name, item]) => 
-      `${item.emoji} **${name}** - ${item.price} monet | 🧼${item.cleanliness}`
+      `${item.emoji} **${name}** - ${item.price} monet | 🧼${item.cleanliness}${item.happiness ? ` 😄${item.happiness}` : ''}${item.health ? ` ❤️${item.health}` : ''}`
     ).join('\n');
     
     const drugItems = Object.entries(SHOP).filter(([,v]) => v.type === 'drug').map(([name, item]) => {
@@ -1058,6 +1331,7 @@ client.on('messageCreate', (message) => {
     if (u.coins < shopItem.price) return message.reply(`❌ Brak monet! Potrzebujesz ${shopItem.price - u.coins} więcej.`);
 
     u.coins -= shopItem.price;
+    u.coinsSpent += shopItem.price;
     if (shopItem.packFor) {
       u.inventory[shopItem.packFor] = (u.inventory[shopItem.packFor] || 0) + shopItem.packAmount;
     } else {
@@ -1112,7 +1386,43 @@ client.on('messageCreate', (message) => {
     if (!cooldownCheck.ok) return message.reply(cooldownCheck.msg);
 
     u.inventory[actualName]--;
-    // Apply effects
+    
+    // Special handling for mystery box
+    if (shopItem.type === 'mystery') {
+      const mysteryEffects = generateMysteryBoxEffects();
+      
+      // Apply mystery effects
+      if (mysteryEffects.hunger !== 0) data.pet.hunger += mysteryEffects.hunger;
+      if (mysteryEffects.happiness !== 0) data.pet.happiness += mysteryEffects.happiness;
+      if (mysteryEffects.health !== 0) data.pet.health += mysteryEffects.health;
+      if (mysteryEffects.cleanliness !== 0) data.pet.cleanliness += mysteryEffects.cleanliness;
+      if (mysteryEffects.anger !== 0) data.pet.anger = Math.max(0, Math.min(100, data.pet.anger + mysteryEffects.anger));
+      if (mysteryEffects.religion !== 0) data.pet.religion += mysteryEffects.religion;
+      
+      clampPet();
+      u.itemCooldowns[actualName].push(Date.now());
+      safeSave();
+      
+      const rarity = mysteryEffects.rarity;
+      const rarityEmoji = rarity === 'legendary' ? '🌟' : rarity === 'cursed' ? '👹' : rarity === 'rare' ? '✨' : rarity === 'uncommon' ? '💫' : '⭐';
+      
+      return message.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle(`🎁 ${rarityEmoji} Otworzyłeś Mystery Box!`)
+            .setDescription(`**Rzadkość:** ${rarity.toUpperCase()}\n\n${mysteryEffects.description}\n\n${getPetMood()}`)
+            .addFields(
+              { name: '🎯 Efekty:', value: mysteryEffects.effectsList, inline: false },
+              { name: '🎁 Pozostało:', value: `${u.inventory[actualName]} sztuka(i)`, inline: false }
+            )
+            .setColor(mysteryEffects.color)
+            .setThumbnail('https://cdn.discordapp.com/attachments/1234567890/1234567890/mysterybox.gif')
+            .setTimestamp()
+        ]
+      });
+    }
+    
+    // Apply normal item effects
     if (shopItem.hunger > 0) data.pet.hunger += shopItem.hunger;
     if (shopItem.happiness > 0) data.pet.happiness += shopItem.happiness;
     if (shopItem.health > 0) data.pet.health += shopItem.health;
@@ -1263,12 +1573,12 @@ const RANDOM_EVENTS = [
   { title: 'Misi przestraszył się w nocy i stracił pewność siebie.', positive: false, effects: { happiness: -15, anger: 10 } },
   { title: 'Misi przewrócił się i trochę się potłukł.', positive: false, effects: { health: -15, anger: 5 } },
   { title: 'Misi nie zdążył z jedzeniem i poczuł głód.', positive: false, effects: { hunger: -15 } },
-  { title: 'Misi pobrudził się podczas zabawy.', positive: false, effects: { cleanliness: -15, anger: 5 } },
+  { title: 'Misi pobrudził się podczas zabawy.', positive: false, effects: { cleanliness: -25, anger: 5 } },
   { title: 'Misi usłyszał dziwne szepty i poczuł lęk.', positive: false, effects: { happiness: -10, anger: 10 } },
   { title: 'Misi nawiedziły duchy.', positive: false, effects: { religion: -20, happiness: -5 } },
-  { title: 'Szatan zakręcił się obok Misia.', positive: false, effects: { religion: -45, anger: 15 } },
+  { title: 'Szatan zakręcił się obok Misia.', positive: false, effects: { religion: -45, anger: 35 } },
   { title: 'Misi poczuł zły wpływ i stracił wiarę.', positive: false, effects: { religion: -25, anger: 10 } },
-  { title: 'Misi miał zły sen, poczuł silne zdenerwowanie i stracił apetyt.', positive: false, effects: { anger: 15, hunger: -15 } }
+  { title: 'Misi miał zły sen, poczuł silne zdenerwowanie i stracił apetyt.', positive: false, effects: { anger: 30, hunger: -15 } }
 ];
 
 function triggerRandomEvent(channel) {
@@ -1371,10 +1681,381 @@ setInterval(() => {
   triggerRandomEvent(channel);
 }, EVENT_INTERVAL_MS);
 
+// 🎁 MYSTERY BOX EFFECTS
+function generateMysteryBoxEffects() {
+  const rand = Math.random();
+  let rarity, color, description;
+  
+  // Determine rarity (25% common, 40% uncommon, 15% rare, 15% cursed, 5% legendary)
+  if (rand < 0.05) {
+    rarity = 'legendary';
+    color = 0xffd700; // Gold
+  } else if (rand < 0.20) {
+    rarity = 'cursed';
+    color = 0x8b0000; // Dark red
+  } else if (rand < 0.35) {
+    rarity = 'rare';
+    color = 0x9966ff; // Purple
+  } else if (rand < 0.75) {
+    rarity = 'uncommon';
+    color = 0x00ffff; // Cyan
+  } else {
+    rarity = 'common';
+    color = 0x808080; // Gray
+  }
+  
+  // Special handling for cursed box
+  if (rarity === 'cursed') {
+    return {
+      rarity,
+      color,
+      description: 'To pudełko jest przeklęte! Misi czuje złą energię...',
+      effectsList: '🍗 Głód -25\n😄 Szczęście -25\n❤️ Zdrowie -25\n🧼 Czystość -25\n😡 Zdenerwowanie +15',
+      hunger: -25,
+      happiness: -25,
+      health: -25,
+      cleanliness: -25,
+      anger: 15,
+      religion: 0
+    };
+  }
+  
+  // Generate random effects (1-3 effects per box)
+  const numEffects = Math.floor(Math.random() * 3) + 1;
+  const effects = {
+    hunger: 0,
+    happiness: 0,
+    health: 0,
+    cleanliness: 0,
+    anger: 0,
+    religion: 0
+  };
+  
+  const possibleEffects = ['hunger', 'happiness', 'health', 'cleanliness', 'anger', 'religion'];
+  const selectedEffects = [];
+  
+  // Select random effects
+  for (let i = 0; i < numEffects; i++) {
+    const availableEffects = possibleEffects.filter(e => !selectedEffects.includes(e));
+    if (availableEffects.length === 0) break;
+    
+    const effect = availableEffects[Math.floor(Math.random() * availableEffects.length)];
+    selectedEffects.push(effect);
+    
+    // Generate value based on rarity
+    let value;
+    if (rarity === 'legendary') {
+      value = Math.floor(Math.random() * 31) + 15; // 15-45
+    } else if (rarity === 'rare') {
+      value = Math.floor(Math.random() * 21) + 10; // 10-30
+    } else if (rarity === 'uncommon') {
+      value = Math.floor(Math.random() * 16) + 5; // 5-20
+    } else {
+      value = Math.floor(Math.random() * 11) + 5; // 5-15
+    }
+    
+    // 20% chance for negative value (except for anger which is always positive when reducing)
+    if (Math.random() < 0.2 && effect !== 'anger') {
+      value = -value;
+    }
+    
+    effects[effect] = value;
+  }
+  
+  // Create description and effects list
+  const effectDescriptions = [];
+  const effectsList = [];
+  
+  if (effects.hunger !== 0) {
+    effectDescriptions.push(`Głód ${effects.hunger > 0 ? 'wzrasta' : 'spada'} o ${Math.abs(effects.hunger)}`);
+    effectsList.push(`${effects.hunger > 0 ? '🍗' : '🍗'} Głód ${effects.hunger > 0 ? '+' : ''}${effects.hunger}`);
+  }
+  if (effects.happiness !== 0) {
+    effectDescriptions.push(`Szczęście ${effects.happiness > 0 ? 'wzrasta' : 'spada'} o ${Math.abs(effects.happiness)}`);
+    effectsList.push(`${effects.happiness > 0 ? '😄' : '😢'} Szczęście ${effects.happiness > 0 ? '+' : ''}${effects.happiness}`);
+  }
+  if (effects.health !== 0) {
+    effectDescriptions.push(`Zdrowie ${effects.health > 0 ? 'wzrasta' : 'spada'} o ${Math.abs(effects.health)}`);
+    effectsList.push(`${effects.health > 0 ? '❤️' : '💔'} Zdrowie ${effects.health > 0 ? '+' : ''}${effects.health}`);
+  }
+  if (effects.cleanliness !== 0) {
+    effectDescriptions.push(`Czystość ${effects.cleanliness > 0 ? 'wzrasta' : 'spada'} o ${Math.abs(effects.cleanliness)}`);
+    effectsList.push(`${effects.cleanliness > 0 ? '🧼' : '🦠'} Czystość ${effects.cleanliness > 0 ? '+' : ''}${effects.cleanliness}`);
+  }
+  if (effects.anger !== 0) {
+    effectDescriptions.push(`Zdenerwowanie ${effects.anger > 0 ? 'wzrasta' : 'spada'} o ${Math.abs(effects.anger)}`);
+    effectsList.push(`${effects.anger > 0 ? '😡' : '😌'} Zdenerwowanie ${effects.anger > 0 ? '+' : ''}${effects.anger}`);
+  }
+  if (effects.religion !== 0) {
+    effectDescriptions.push(`Religia ${effects.religion > 0 ? 'wzrasta' : 'spada'} o ${Math.abs(effects.religion)}`);
+    effectsList.push(`${effects.religion > 0 ? '🙏' : '👿'} Religia ${effects.religion > 0 ? '+' : ''}${effects.religion}`);
+  }
+  
+  description = `Otwierasz pudełko z niespodzianką i: ${effectDescriptions.join(', ')}!`;
+  
+  return {
+    rarity,
+    color,
+    description,
+    effectsList: effectsList.join('\n'),
+    ...effects
+  };
+}
+
+// �� INTERAKTYWNE PRZYCISKI - HANDLER
+client.on('interactionCreate', async (interaction) => {
+  if (!interaction.isButton()) return;
+  
+  const userId = interaction.user.id;
+  ensureUser(userId);
+  
+  // Sprawdź czy to właściwy kanał
+  const channel = interaction.guild.channels.cache.find(
+    c => c.name === allowedChannelName && c.isTextBased()
+  );
+  
+  if (!channel || interaction.channel.id !== channel.id) {
+    return interaction.reply({ content: '❌ Możesz używać przycisków tylko na kanale #misi!', ephemeral: true });
+  }
+  
+  if (data.pet.dead) {
+    return interaction.reply({ content: '❌ Misi nie żyje! Użyj `!adopt` lub `!restore`.', ephemeral: true });
+  }
+  
+  const action = interaction.customId;
+  let response;
+  
+  switch (action) {
+    case 'feed':
+      response = handleFeedAction(userId);
+      break;
+    case 'play':
+      response = handlePlayAction(userId);
+      break;
+    case 'clean':
+      response = handleCleanAction(userId);
+      break;
+    case 'heal':
+      response = handleHealAction(userId);
+      break;
+    default:
+      return;
+  }
+  
+  if (response.success) {
+    // Wyślij powiadomienie o akcji z XP i monetami
+    await interaction.followUp({
+      content: `${response.emoji} ${interaction.user.username} ${response.message}! Otrzymano: 💰 ${response.coins} monet, 📈 ${response.xp} XP`,
+      ephemeral: false
+    });
+    
+    // Zaktualizuj oryginalną wiadomość
+    await interaction.update({
+      embeds: [createStatusEmbed(userId)],
+      components: [createActionButtons(userId)]
+    });
+  } else {
+    // Pokaż błąd tylko użytkownikowi
+    await interaction.reply({ content: response.message, ephemeral: true });
+  }
+});
+
+// Funkcje pomocnicze dla przycisków
+function handleFeedAction(userId) {
+  const now = Date.now();
+  const lastFeed = data.users[userId].lastFeed || 0;
+  if (now - lastFeed < 600000) {
+    const remainingMs = 600000 - (now - lastFeed);
+    const totalSeconds = Math.ceil(remainingMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return { success: false, message: `⏳ Poczekaj ${minutes}m ${seconds}s przed kolejnym karmieniem!` };
+  }
+  
+  const feedBefore = data.pet.hunger;
+  data.pet.hunger = Math.min(100, data.pet.hunger + 15);
+  clampPet();
+  
+  const feedCoins = Math.floor(Math.random() * 16) + 5;
+  const levelBonus = getLevelBonus(data.users[userId].level);
+  
+  data.users[userId].coins += feedCoins + levelBonus;
+  data.users[userId].xp += 5;
+  data.users[userId].lastFeed = now;
+  safeSave();
+  
+  return { 
+    success: true, 
+    message: 'nakarmił Misia', 
+    emoji: '🍗',
+    coins: feedCoins + levelBonus,
+    xp: 5
+  };
+}
+
+function handlePlayAction(userId) {
+  const now = Date.now();
+  const lastPlay = data.users[userId].lastPlay || 0;
+  if (now - lastPlay < 600000) {
+    const remainingMs = 600000 - (now - lastPlay);
+    const totalSeconds = Math.ceil(remainingMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return { success: false, message: `⏳ Poczekaj ${minutes}m ${seconds}s przed kolejną zabawą!` };
+  }
+  
+  const playBefore = data.pet.happiness;
+  data.pet.happiness = Math.min(100, data.pet.happiness + 10);
+  data.pet.happinessLossSincePlay = 0;
+  data.pet.lastPlayAt = Date.now();
+  clampPet();
+  
+  const playCoins = Math.floor(Math.random() * 16) + 5;
+  const levelBonus = getLevelBonus(data.users[userId].level);
+  
+  data.users[userId].coins += playCoins + levelBonus;
+  data.users[userId].xp += 5;
+  data.users[userId].lastPlay = now;
+  safeSave();
+  
+  return { 
+    success: true, 
+    message: 'bawił się z Misiem', 
+    emoji: '🎾',
+    coins: playCoins + levelBonus,
+    xp: 5
+  };
+}
+
+function handleCleanAction(userId) {
+  const now = Date.now();
+  const lastClean = data.users[userId].lastClean || 0;
+  if (now - lastClean < 600000) {
+    const remainingMs = 600000 - (now - lastClean);
+    const totalSeconds = Math.ceil(remainingMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return { success: false, message: `⏳ Poczekaj ${minutes}m ${seconds}s przed kolejnym czyszczeniem!` };
+  }
+  
+  const cleanBefore = data.pet.cleanliness;
+  data.pet.cleanliness = Math.min(100, data.pet.cleanliness + 10);
+  clampPet();
+
+  const cleanCoins = Math.floor(Math.random() * 16) + 5;
+  const levelBonus = getLevelBonus(data.users[userId].level);
+
+  data.users[userId].coins += cleanCoins + levelBonus;
+  data.users[userId].xp += 5;
+  data.users[userId].lastClean = now;
+  safeSave();
+
+  return { 
+    success: true, 
+    message: 'umył Misia', 
+    emoji: '🧼',
+    coins: cleanCoins + levelBonus,
+    xp: 5
+  };
+}
+
+function handleHealAction(userId) {
+  const now = Date.now();
+  const lastHeal = data.users[userId].lastHeal || 0;
+  if (now - lastHeal < 600000) {
+    const remainingMs = 600000 - (now - lastHeal);
+    const totalSeconds = Math.ceil(remainingMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return { success: false, message: `⏳ Poczekaj ${minutes}m ${seconds}s przed kolejnym leczeniem!` };
+  }
+  
+  const healBefore = data.pet.health;
+  data.pet.health = Math.min(100, data.pet.health + 15);
+  clampPet();
+  
+  const healCoins = Math.floor(Math.random() * 16) + 5;
+  const levelBonus = getLevelBonus(data.users[userId].level);
+  
+  data.users[userId].coins += healCoins + levelBonus;
+  data.users[userId].xp += 5;
+  data.users[userId].lastHeal = now;
+  safeSave();
+  
+  return { 
+    success: true, 
+    message: 'uleczył Misia', 
+    emoji: '❤️',
+    coins: healCoins + levelBonus,
+    xp: 5
+  };
+}
+
+// 📊 MONITOROWANIE I LOGOWANIE
+const log = (message, level = 'info') => {
+  const timestamp = new Date().toISOString();
+  const prefix = level === 'error' ? '🚨' : level === 'warn' ? '⚠️' : 'ℹ️';
+  console.log(`${prefix} [${timestamp}] ${message}`);
+};
+
+const backupData = () => {
+  try {
+    const backup = JSON.stringify(data, null, 2);
+    fs.writeFileSync(`data.backup.${Date.now()}.json`, backup);
+    log('Backup danych utworzony pomyślnie', 'info');
+  } catch (error) {
+    log(`Błąd podczas tworzenia backupu: ${error.message}`, 'error');
+  }
+};
+
+const validateData = () => {
+  const issues = [];
+  
+  // Sprawdź strukturę danych
+  if (!data.pet) issues.push('Brak danych pet');
+  if (!data.users) issues.push('Brak danych użytkowników');
+  
+  // Sprawdź statystyki pet
+  const petStats = ['hunger', 'happiness', 'health', 'cleanliness', 'anger', 'religion'];
+  for (const stat of petStats) {
+    if (typeof data.pet[stat] !== 'number' || data.pet[stat] < 0 || data.pet[stat] > 100) {
+      issues.push(`Niepoprawna wartość statystyki: ${stat}`);
+    }
+  }
+  
+  // Sprawdź użytkowników
+  for (const [userId, user] of Object.entries(data.users)) {
+    if (!user.coins || user.coins < 0) issues.push(`Użytkownik ${userId} ma niepoprawne monety`);
+    if (!user.xp || user.xp < 0) issues.push(`Użytkownik ${userId} ma niepoprawne XP`);
+    if (!user.level || user.level < 1) issues.push(`Użytkownik ${userId} ma niepoprawny level`);
+  }
+  
+  if (issues.length > 0) {
+    log(`Znalezione problemy z danymi: ${issues.join(', ')}`, 'warn');
+    return false;
+  }
+  
+  return true;
+};
+
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 if (!DISCORD_TOKEN) {
   console.error('ERROR: Missing DISCORD_TOKEN environment variable. Set it in Railway variables.');
   process.exit(1);
 }
+
+// Walidacja przy starcie
+if (!validateData()) {
+  log('Krytyczne błędy danych - aplikacja zostanie zatrzymana', 'error');
+  process.exit(1);
+}
+
+// Automatyczny backup co 6 godzin
+setInterval(backupData, 6 * 60 * 60 * 1000);
+
+// Logowanie startu aplikacji
+log('Aplikacja Misi Bot uruchomiona pomyślnie', 'info');
+log(`Token Discord: ${DISCORD_TOKEN ? 'OK' : 'BRAK'}`, 'info');
+log(`Kanał docelowy: ${allowedChannelName}`, 'info');
 
 client.login(DISCORD_TOKEN);
