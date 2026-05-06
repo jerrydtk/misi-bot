@@ -679,7 +679,15 @@ client.on('messageCreate', async (message) => {
   if (!channel || message.channel.id !== channel.id) return;
 
   const userId = message.author.id;
-  ensureUser(userId);
+  
+  // Dodatkowe logowanie dla debugowania problemów z danymi
+  try {
+    ensureUser(userId);
+  } catch (error) {
+    log(`Błąd podczas inicjalizacji użytkownika ${userId}: ${error.message}`, 'error');
+    log(`Stack trace: ${error.stack}`, 'error');
+    return message.reply('❌ Wystąpił błąd z danymi użytkownika. Skontaktuj się z administratorem.');
+  }
 
   // 🚨 EMERGENCY RESTORE (ADMIN ONLY) - PRZED blokadą śmierci!
   if (message.content === '!restore') {
@@ -2008,31 +2016,121 @@ const backupData = () => {
   }
 };
 
+const recoverFromBackup = () => {
+  try {
+    const files = fs.readdirSync('.').filter(file => file.startsWith('data.backup.') && file.endsWith('.json'));
+    if (files.length === 0) {
+      log('Brak plików backup do przywrócenia', 'warn');
+      return false;
+    }
+    
+    // Sortuj pliki po dacie i weź najnowszy
+    files.sort((a, b) => {
+      const timeA = parseInt(a.split('.')[2]);
+      const timeB = parseInt(b.split('.')[2]);
+      return timeB - timeA;
+    });
+    
+    const latestBackup = files[0];
+    log(`Przywracanie z backupu: ${latestBackup}`, 'info');
+    
+    const backupData = JSON.parse(fs.readFileSync(latestBackup, 'utf8'));
+    
+    // Waliduj dane z backupu
+    const originalData = data;
+    data = backupData;
+    
+    if (validateData()) {
+      log('Dane przywrócone pomyślnie z backupu', 'info');
+      return true;
+    } else {
+      log('Dane z backupu są uszkodzone, przywracanie oryginalnych danych', 'error');
+      data = originalData;
+      return false;
+    }
+  } catch (error) {
+    log(`Błąd podczas przywracania z backupu: ${error.message}`, 'error');
+    return false;
+  }
+};
+
+const safeSave = () => {
+  try {
+    clampPet();
+    fs.writeFileSync('data.json', JSON.stringify(data, null, 2));
+  } catch (error) {
+    log(`Krytyczny błąd zapisu danych: ${error.message}`, 'error');
+    log('Próba przywrócenia z ostatniego backupu...', 'warn');
+    if (recoverFromBackup()) {
+      log('Dane przywrócone z backupu', 'info');
+    } else {
+      log('Nie udało się przywrócić danych - aplikacja może być niestabilna', 'error');
+    }
+  }
+};
+
 const validateData = () => {
   const issues = [];
+  let criticalErrors = [];
   
   // Sprawdź strukturę danych
-  if (!data.pet) issues.push('Brak danych pet');
-  if (!data.users) issues.push('Brak danych użytkowników');
+  if (!data.pet) {
+    criticalErrors.push('Brak danych pet');
+  } else if (typeof data.pet !== 'object') {
+    criticalErrors.push('Dane pet nie są obiektem');
+  }
+  
+  if (!data.users) {
+    criticalErrors.push('Brak danych użytkowników');
+  } else if (typeof data.users !== 'object') {
+    criticalErrors.push('Dane użytkowników nie są obiektem');
+  }
   
   // Sprawdź statystyki pet
   const petStats = ['hunger', 'happiness', 'health', 'cleanliness', 'anger', 'religion'];
   for (const stat of petStats) {
     if (typeof data.pet[stat] !== 'number' || data.pet[stat] < 0 || data.pet[stat] > 100) {
-      issues.push(`Niepoprawna wartość statystyki: ${stat}`);
+      issues.push(`Niepoprawna wartość statystyki: ${stat} (${data.pet[stat]})`);
     }
   }
   
-  // Sprawdź użytkowników
+  // Sprawdź użytkowników - szczegółowa walidacja
   for (const [userId, user] of Object.entries(data.users)) {
-    if (!user.coins || user.coins < 0) issues.push(`Użytkownik ${userId} ma niepoprawne monety`);
-    if (!user.xp || user.xp < 0) issues.push(`Użytkownik ${userId} ma niepoprawne XP`);
-    if (!user.level || user.level < 1) issues.push(`Użytkownik ${userId} ma niepoprawny level`);
+    if (typeof user !== 'object') {
+      criticalErrors.push(`Użytkownik ${userId} ma niepoprawny typ danych`);
+      continue;
+    }
+    
+    if (!user.coins || user.coins < 0) {
+      issues.push(`Użytkownik ${userId} ma niepoprawne monety (${user.coins})`);
+    }
+    if (!user.xp || user.xp < 0) {
+      issues.push(`Użytkownik ${userId} ma niepoprawne XP (${user.xp})`);
+    }
+    if (!user.level || user.level < 1 || user.level > 1000) {
+      issues.push(`Użytkownik ${userId} ma niepoprawny level (${user.level})`);
+    }
+    if (!user.inventory || typeof user.inventory !== 'object') {
+      criticalErrors.push(`Użytkownik ${userId} ma niepoprawne inventory`);
+    }
+    if (!user.cooldowns || typeof user.cooldowns !== 'object') {
+      criticalErrors.push(`Użytkownik ${userId} ma niepoprawne cooldowns`);
+    }
+    if (!user.itemCooldowns || typeof user.itemCooldowns !== 'object') {
+      criticalErrors.push(`Użytkownik ${userId} ma niepoprawne itemCooldowns`);
+    }
+  }
+  
+  // Logowanie wyników walidacji
+  if (criticalErrors.length > 0) {
+    log('KRYTYCZNE BŁĘDY DANYCH:', 'error');
+    criticalErrors.forEach(error => log(`  - ${error}`, 'error'));
+    log('Aplikacja zostanie zatrzymana dla bezpieczeństwa danych!', 'error');
+    return false;
   }
   
   if (issues.length > 0) {
-    log(`Znalezione problemy z danymi: ${issues.join(', ')}`, 'warn');
-    return false;
+    log(`Ostrzeżenia w danych: ${issues.join(', ')}`, 'warn');
   }
   
   return true;
