@@ -264,7 +264,7 @@ function createStatusEmbed(userId) {
       { name: '👤 Użytkownik', value: `<@${userId}>`, inline: true },
       { name: '💰 Monety', value: `${u.coins}`, inline: true },
       { name: '🏆 Level', value: `${u.level}`, inline: true },
-      { name: '📈 XP', value: `${u.xp}/${(u.level + 1) * 50}`, inline: true },
+      { name: '📈 XP', value: `${u.xp}/150`, inline: true },
       { name: '🎯 Ogólny status', value: `${overallStatus}%`, inline: true },
       { name: '⏰ Ostatnia akcja', value: getLastAction(userId), inline: true }
     )
@@ -540,9 +540,153 @@ function checkItemCooldown(user, item) {
   return { ok: true };
 }
 
-// 🧠 AI - Rozszerzone odpowiedzi
+// 🧠 AI - Inteligentny system rozumienia języka
 function aiReply(message) {
   const t = message.content.toLowerCase();
+  
+  // Inteligentna analiza kontekstu i intencji
+  function analyzeIntent(text) {
+    const words = text.split(/\s+/);
+    const hasWord = (word) => words.includes(word);
+    const hasAnyWord = (wordList) => wordList.some(word => hasWord(word));
+    
+    // Analiza emocji i intencji
+    const intent = {
+      isGreeting: hasAnyWord(['hej', 'siema', 'cześć', 'witam', 'elo', 'dzień dobry', 'dzien dobry', 'good morning']),
+      isGoodbye: hasAnyWord(['dobranoc', 'good night', 'pa', 'żegnam']),
+      isLove: hasAnyWord(['kocham', 'kochanie', 'missie', 'uwielbiam', 'lubie']),
+      isQuestion: hasAnyWord(['?', 'czy', 'jak', 'co', 'gdzie', 'kiedy', 'dlaczego', 'ile']),
+      isPain: hasAnyWord(['boli', 'ból', 'ból', 'chory', 'choroba', 'złe', 'źle']),
+      isHunger: hasAnyWord(['głód', 'glodny', 'głodny', 'jeść', 'jem', 'chce jeść', 'jedzenie']),
+      isThirst: hasAnyWord(['pić', 'pragnie', 'spragniony', 'woda', 'napój']),
+      isPlay: hasAnyWord(['zabawa', 'bawić', 'pobawić', 'nuda', 'nudno', 'grać']),
+      isFood: hasAnyWord(['jedzenie', 'jeść', 'przepis', 'gotować', 'kanapka', 'pizza', 'obiad']),
+      isMood: hasAnyWord(['mood', 'nastroj', 'samopoczucie', 'czujesz', 'masz się']),
+      isLocation: hasAnyWord(['gdzie', 'lokalizacja', 'miejsce', 'pozycja']),
+      isActivity: hasAnyWord(['robisz', 'co robisz', 'działanie', 'aktualność']),
+      isMedia: hasAnyWord(['film', 'muzyka', 'piosenka', 'książka', 'serial']),
+      isHealth: hasAnyWord(['zdrowie', 'zdrowy', 'choroba', 'leczenie', 'medycyna']),
+      isCleaning: hasAnyWord(['czystość', 'brudny', 'myć', 'sprzątać', 'umyć']),
+      isReligion: hasAnyWord(['bóg', 'modlić', 'religia', 'wiara', 'modlitwa']),
+      isMoney: hasAnyWord(['pieniądze', 'monety', 'coins', 'kasa', 'hajs']),
+      isAge: hasAnyWord(['wiek', 'lat', 'stary', 'młody', 'urodziny']),
+      isTime: hasAnyWord(['czas', 'godzina', 'termin', 'kiedy', 'pora']),
+      isHelp: hasAnyWord(['pomoc', 'help', 'pomóż', 'instrukcja', 'jak'])
+    };
+    
+    return intent;
+  }
+  
+  // Inteligentne generowanie odpowiedzi na podstawie intencji
+  function generateResponse(text, intent) {
+    const words = text.split(/\s+/);
+    const hasWord = (word) => words.includes(word);
+    const hasAnyWord = (wordList) => wordList.some(word => hasWord(word));
+    const responses = [];
+    
+    if (intent.isGreeting) {
+      responses.push("🐻 Misi się cieszy!");
+    }
+    
+    if (intent.isLove) {
+      responses.push("🐻 Misi też ❤️");
+    }
+    
+    if (intent.isGoodbye) {
+      responses.push("🐻 Dobranoc! 🌙");
+    }
+    
+    if (intent.isPain) {
+      const bodyParts = [
+        "🐻 Misi boli głowa... 🤕",
+        "🐻 Misi boli brzuszek... 🤢", 
+        "🐻 Misi boli nóżka... 🦵",
+        "🐻 Misi boli łapka... 🐾",
+        "🐻 Misi boli ogonek... 🐕",
+        "🐻 Misi boli uszko... 👂",
+        "🐻 Misi boli nosek... 👃",
+        "🐻 Misi boli oczko... 👁️",
+        "🐻 Misi boli serduszko... ❤️",
+        "🐻 Misi boli kręgosłup... 🦴",
+        "🐻 Misi boli gardło... 😷",
+        "🐻 Misi boli wszystko... 💀",
+        "🐻 Że Rychu Peja ma szanse uczciwie zarobić! 🎤💰"
+      ];
+      responses.push(bodyParts[Math.floor(Math.random() * bodyParts.length)]);
+    }
+    
+    if (intent.isHunger) {
+      responses.push("🐻 Misi chce jeść 🍗");
+    }
+    
+    if (intent.isThirst) {
+      responses.push("🐻 Misi chce pić! 💧");
+    }
+    
+    if (intent.isPlay) {
+      responses.push("🐻 Pobaw się ze mną 🎾");
+    }
+    
+    if (intent.isFood) {
+      if (text.includes('przepis') || text.includes('jak zrobić')) {
+        responses.push("🐻 Oto przepis na pierogi Misia:\n🥟 Składniki: mąka, woda, ser, ziemniaki\n👨‍🍳 Przygotuj ciasto i farsz\n🥟 Gotuj przez 15 minut\n🍽 Smacznego!");
+      } else {
+        responses.push("🐻 Misi lubi: 🍯 miód, 🍎 jabłka, 🥨 chrupki!");
+      }
+    }
+    
+    if (intent.isMood || (intent.isQuestion && hasAnyWord(['jak', 'masz']))) {
+      responses.push("🐻 Misi czuje się " + (data.pet.happiness > 70 ? 'świetnie! 😊' : data.pet.happiness > 40 ? 'dobrze 😐' : 'słabo 😟'));
+    }
+    
+    if (intent.isLocation) {
+      responses.push("🐻 Misi jest tutaj! Z tobą! 🐻");
+    }
+    
+    if (intent.isActivity) {
+      responses.push("🐻 Misi myśli o życiu... 🤔");
+    }
+    
+    if (intent.isMedia) {
+      if (text.includes('film')) responses.push("🐻 Misi chce oglądać film! 🎬🍿");
+      else if (text.includes('muzyka') || text.includes('piosenka')) responses.push("🐻 Misi tańczy! 🎵💃🕺");
+      else if (text.includes('książka')) responses.push("🐻 Misi słucha bajki! 📖📚");
+    }
+    
+    if (intent.isAge) {
+      responses.push("🐻 Misi jest wiecznie młody! 🐻‍♂️");
+    }
+    
+    if (intent.isHelp) {
+      responses.push("🐻 Użyj komendy !help aby zobaczyć wszystkie dostępne komendy!");
+    }
+    
+    // Jeśli znaleziono intencję, zwróć pierwszą odpowiedź
+    if (responses.length > 0) {
+      return responses[0];
+    }
+    
+    // Inteligentne domyślanie się na podstawie kontekstu
+    if (text.length < 20 && intent.isQuestion) {
+      // Krótkie pytania - domyśl się o co chodzi
+      if (hasAnyWord(['co'])) {
+        if (hasAnyWord(['robisz', 'dzieje'])) return "🐻 Misi myśli o życiu... 🤔";
+        if (hasAnyWord(['u', 'ciebie'])) return "🐻 Misi czuje się " + (data.pet.happiness > 70 ? 'świetnie! 😊' : data.pet.happiness > 40 ? 'dobrze 😐' : 'słabo 😟');
+      }
+      if (hasAnyWord(['jak'])) {
+        if (hasAnyWord(['masz', 'sie'])) return "🐻 Misi czuje się " + (data.pet.happiness > 70 ? 'świetnie! 😊' : data.pet.happiness > 40 ? 'dobrze 😐' : 'słabo 😟');
+      }
+    }
+    
+    return null;
+  }
+  
+  const intent = analyzeIntent(t);
+  const intelligentResponse = generateResponse(t, intent);
+  
+  if (intelligentResponse) {
+    return message.reply(intelligentResponse);
+  }
 
   // Powitania i podstawowe interakcje
   const greetings = [
@@ -584,6 +728,30 @@ function aiReply(message) {
     { k: ["co robisz","co misi robi"], r: "🐻 Misi myśli o życiu... 🤔" }
   ];
 
+  // Bóle i dolegliwości
+  const pains = [
+    { k: ["co cie boli","misiu co cie boli","co ci boli misiu","gdzie cie boli","co boli","misi co boli"], 
+      r: () => {
+        const bodyParts = [
+          "🐻 Misi boli głowa... 🤕",
+          "🐻 Misi boli brzuszek... 🤢", 
+          "🐻 Misi boli nóżka... 🦵",
+          "🐻 Misi boli łapka... 🐾",
+          "🐻 Misi boli ogonek... 🐕",
+          "🐻 Misi boli uszko... 👂",
+          "🐻 Misi boli nosek... 👃",
+          "🐻 Misi boli oczko... 👁️",
+          "🐻 Misi boli serduszko... ❤️",
+          "🐻 Misi boli kręgosłup... 🦴",
+          "🐻 Misi boli gardło... 😷",
+          "🐻 Misi boli wszystko... 💀",
+          "🐻 Że Rychu Peja ma szanse uczciwie zarobić! 🎤💰"
+        ];
+        return bodyParts[Math.floor(Math.random() * bodyParts.length)];
+      }
+    }
+  ];
+
   // Specjalne odpowiedzi zależne od statystyk
   const statBased = [
     { 
@@ -604,12 +772,13 @@ function aiReply(message) {
   ];
 
   // Sprawdź wszystkie kategorie
-  const allMaps = [...greetings, ...needs, ...food, ...activities, ...questions];
+  const allMaps = [...greetings, ...needs, ...food, ...activities, ...questions, ...pains];
   
   for (const m of allMaps) {
     if (m.k.some(x => t.includes(x))) {
       if (m.condition && !m.condition()) continue; // Pomiń jeśli warunek nie spełniony
-      return message.reply(m.r);
+      const response = typeof m.r === 'function' ? m.r() : m.r;
+      return message.reply(response);
     }
   }
 
@@ -653,12 +822,11 @@ function reward(userId, coins, xp, msg) {
   u.coins += coins;
   u.xp += xp;
 
-  // Calculate XP needed for next level: Level 2 = 100, Level 3 = 150, Level 4 = 200, etc.
-  while (u.xp >= (u.level + 1) * 50) {
-    const xpNeededForNextLevel = (u.level + 1) * 50;
-    u.xp -= xpNeededForNextLevel;
+  // Calculate XP needed for next level: 150 XP dla każdego poziomu
+  while (u.xp >= 150) {
+    u.xp -= 150;
     u.level++;
-    msg.channel.send(`🏆 LEVEL UP → ${u.level}`);
+    msg.channel.send(`🏆 LEVEL UP → ${u.level}! (XP zresetowane do ${u.xp}/150)`);
   }
 
   safeSave();
@@ -845,7 +1013,10 @@ client.on('messageCreate', async (message) => {
 💰 **Interakcje:**
 💝 !gift @user kwota - wyślij monety innemu użytkownikowi
 
-🔄 **Admin:**
+� **Wróżenie i Zabawa:**
+🔮 !kula [pytanie] - zapytaj Magiczną Kulę Misia o odpowiedź
+
+�� **Admin:**
 🚨 !restore - przywróć Misia do życia (emergency)
 🔫 !kill - zabij Misia (admin only)
 
@@ -854,9 +1025,7 @@ client.on('messageCreate', async (message) => {
 
 **⚡ System Levelowy i Bonusy:**
 - 5 XP za każdą akcję
-- Level 2: 100 XP potrzebne
-- Level 3: 150 XP potrzebne  
-- Level 4: 200 XP potrzebne
+- 150 XP potrzebne na KAŻDY poziom (po osiągnięciu 150/150 XP awansujesz i XP resetuje się do 0)
 - Bonusy monetowe: 0 monet (lvl 1-4), +3 monety (lvl 5-9), +6 monet (lvl 10+)
 
 **🛡️ Bezpieczeństwo:**
@@ -867,8 +1036,7 @@ client.on('messageCreate', async (message) => {
 
   if (message.content === '!status') {
     return message.reply({
-      embeds: [createStatusEmbed(userId)],
-      components: [createActionButtons(userId)]
+      embeds: [createStatusEmbed(userId)]
     });
   }
 
@@ -914,7 +1082,7 @@ client.on('messageCreate', async (message) => {
         .setDescription(`**Głód:** ${Math.round(feedBefore)} → ${Math.round(data.pet.hunger)}\n**Otrzymano:** 💰 ${feedCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Głód", value: bar(data.pet.hunger), inline: false },
-          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/150`, inline: true },
           { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.hunger > 70 ? 0x00ff00 : data.pet.hunger > 40 ? 0xffff00 : 0xff0000)
@@ -948,6 +1116,10 @@ client.on('messageCreate', async (message) => {
     data.pet.happiness = Math.min(100, data.pet.happiness + 10);
   data.pet.happinessLossSincePlay = 0;
   data.pet.lastPlayAt = Date.now();
+  
+  // Zapisz czas ostatniej zabawy dla antyspamu
+  data.users[userId].lastPlay = Date.now();
+  
   clampPet();
 
   // Losowanie monet 5-20 + bonus za level
@@ -966,7 +1138,7 @@ client.on('messageCreate', async (message) => {
         .setDescription(`**Szczęście:** ${Math.round(playBefore)} → ${Math.round(data.pet.happiness)}\n**Otrzymano:** 💰 ${playCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Szczęście", value: bar(data.pet.happiness), inline: false },
-          { name: "� Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
           { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.happiness > 70 ? 0x00ff00 : data.pet.happiness > 40 ? 0xffff00 : 0xff0000)
@@ -1017,7 +1189,7 @@ client.on('messageCreate', async (message) => {
         .setDescription(`**Czystość:** ${Math.round(cleanBefore)} → ${Math.round(data.pet.cleanliness)}\n**Otrzymano:** 💰 ${cleanCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Czystość", value: bar(data.pet.cleanliness), inline: false },
-          { name: "� Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
           { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.cleanliness > 70 ? 0x00ff00 : data.pet.cleanliness > 40 ? 0xffff00 : 0xff0000)
@@ -1068,7 +1240,7 @@ client.on('messageCreate', async (message) => {
         .setDescription(`**Zdrowie:** ${Math.round(healBefore)} → ${Math.round(data.pet.health)}\n**Otrzymano:** 💰 ${healCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Zdrowie", value: bar(data.pet.health), inline: false },
-          { name: "� Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
           { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.health > 70 ? 0x00ff00 : data.pet.health > 40 ? 0xffff00 : 0xff0000)
@@ -1198,8 +1370,7 @@ client.on('messageCreate', async (message) => {
     const sorted = Object.entries(data.users).sort((a, b) => b[1].level - a[1].level).slice(0, 10);
     const list = sorted.map((entry, i) => {
       const user = entry[1];
-      const xpNeeded = (user.level + 1) * 50;
-      return `${i + 1}. <@${entry[0]}> - Level ${user.level} (${user.xp}/${xpNeeded} XP)`;
+      return `${i + 1}. <@${entry[0]}> - Level ${user.level} (${user.xp}/150 XP)`;
     }).join('\n');
     
     return message.reply({
@@ -1370,6 +1541,55 @@ client.on('messageCreate', async (message) => {
           .setTitle('🎒 TWOJE PRZEDMIOTY')
           .setDescription(items || '🎒 Puste')
           .setColor(0x8b4513)
+      ]
+    });
+  }
+
+  // 🔮 KULA - Magiczna 8-ball odpowiedzi
+  if (message.content.startsWith('!kula')) {
+    const question = message.content.slice(6).trim();
+    
+    if (!question) {
+      return message.reply("🔮 Zadaj pytanie do Magicznej Kuli Misia!\n\nUżycie: `!kula [twoje pytanie]`");
+    }
+
+    const responses = [
+      "🐻 Tak, na pewno!",
+      "🐻 Nie, w żadnym wypadku!",
+      "🐻 Możliwe, ale nie pewne...",
+      "🐻 Zapytaj ponownie później!",
+      "🐻 Misi myśli... tak!",
+      "🐻 Misi myśli... nie!",
+      "🐻 Absolutnie tak! 🌟",
+      "🐻 Absolutnie nie! ❌",
+      "🐻 Perspektywy są dobre! 👍",
+      "🐻 Perspektywy są złe... 👎",
+      "🐻 Misi nie jest pewien... 🤔",
+      "🐻 Znaki wskazują na tak! ✨",
+      "🐻 Znaki wskazują na nie! 🌑",
+      "🐻 Skup się i zapytaj ponownie!",
+      "🐻 Misi mówi tak! 🐻",
+      "🐻 Misi mówi nie! 🐻",
+      "🐻 Oczywiście, że tak! 😊",
+      "🐻 Oczywiście, że nie! 😞",
+      "🐻 Czas pokaże... ⏰",
+      "🐻 Misi w to wierzy! 🙏"
+    ];
+
+    const response = responses[Math.floor(Math.random() * responses.length)];
+    
+    return message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("🔮 Magiczna Kula Misia")
+          .setDescription(`**Pytanie:** ${question}\n\n**Odpowiedź Misia:** ${response}`)
+          .setColor(0x9966ff)
+          .setThumbnail('https://cdn.discordapp.com/attachments/1234567890/1234567890/magic8ball.gif')
+          .addFields(
+            { name: "🐻 Misi radzi:", value: "Zaufaj mocy Magicznej Kuli Misia!", inline: false }
+          )
+          .setFooter({ text: `Pytanie zadane przez ${message.author.username}`, iconURL: message.author.displayAvatarURL() })
+          .setTimestamp()
       ]
     });
   }
@@ -1855,8 +2075,7 @@ client.on('interactionCreate', async (interaction) => {
     
     // Zaktualizuj oryginalną wiadomość
     await interaction.update({
-      embeds: [createStatusEmbed(userId)],
-      components: [createActionButtons(userId)]
+      embeds: [createStatusEmbed(userId)]
     });
   } else {
     // Pokaż błąd tylko użytkownikowi
