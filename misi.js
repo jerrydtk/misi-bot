@@ -540,9 +540,72 @@ function checkItemCooldown(user, item) {
   return { ok: true };
 }
 
-// 🧠 AI - Inteligentny system rozumienia języka
+// 🧠 AI - Zaawansowany system rozumienia języka z pamięcią konwersacji
 function aiReply(message) {
   const t = message.content.toLowerCase();
+  const userId = message.author.id;
+  
+  // Inicjalizacja pamięci konwersacji dla użytkownika
+  if (!data.conversationMemory) data.conversationMemory = {};
+  if (!data.conversationMemory[userId]) {
+    data.conversationMemory[userId] = {
+      messages: [],
+      emotions: [],
+      lastInteraction: Date.now(),
+      mood: 'neutral',
+      trustLevel: 50
+    };
+  }
+  
+  const memory = data.conversationMemory[userId];
+  
+  // Dodaj aktualną wiadomość do pamięci
+  memory.messages.push({
+    text: t,
+    timestamp: Date.now(),
+    author: userId
+  });
+  
+  // Zachowaj tylko ostatnie 15 wiadomości
+  if (memory.messages.length > 15) {
+    memory.messages = memory.messages.slice(-15);
+  }
+  
+  memory.lastInteraction = Date.now();
+  
+  // Funkcje pomocnicze do analizy tekstu
+  const words = t.split(/\s+/);
+  const hasWord = (word) => words.includes(word);
+  const hasAnyWord = (wordList) => wordList.some(word => hasWord(word));
+  
+  // Zaawansowana analiza emocji i kontekstu
+  function analyzeEmotion(text) {
+    const emotions = {
+      joy: hasAnyWord(['radosny', 'szczęśliwy', 'wesoły', 'super', 'świetnie', 'świetny', 'hehe', 'haha', 'lol', '😊', '😄', '🎉']),
+      anger: hasAnyWord(['wkurzony', 'zły', 'pierdolony', 'kurwa', 'cholera', 'gówno', 'do dupy', '😡', '😠', '💢']),
+      sadness: hasAnyWord(['smutny', 'przykro', 'płaczę', 'depresja', 'słabo', 'źle', '😢', '😭', '💔']),
+      fear: hasAnyWord(['boję', 'strach', 'lek', 'przerażony', '😨', '😱', '😰']),
+      love: hasAnyWord(['kocham', 'kochanie', 'missie', 'uwielbiam', 'lubie', 'serce', '❤️', '💕']),
+      excitement: hasAnyWord(['ekscytujący', 'super', 'wow', 'och', 'niesamowite', '🤩', '✨', '🔥']),
+      confusion: hasAnyWord(['nie rozumiem', 'co', 'jak', 'dlaczego', '🤔', '❓', '🤷']),
+      tired: hasAnyWord(['zmęczony', 'śpiący', 'chcę spać', 'sen', '😴', '😪', '🥱'])
+    };
+    
+    // Znajdź dominującą emocję
+    for (const [emotion, hasEmotion] of Object.entries(emotions)) {
+      if (hasEmotion) return emotion;
+    }
+    return 'neutral';
+  }
+  
+  // Analiza tonu rozmowy
+  function analyzeTone(text) {
+    if (hasAnyWord(['kurwa', 'pierdol', 'cholera', 'gówno', 'jebać'])) return 'vulgar';
+    if (hasAnyWord(['proszę', 'dziękuję', 'bardzo proszę', 'przepraszam'])) return 'formal';
+    if (hasAnyWord(['stary', 'ziom', 'brachu', 'koleś', 'kumplu'])) return 'informal';
+    if (hasAnyWord(['lol', 'lmao', 'xd', 'haha', 'hehe'])) return 'playful';
+    return 'neutral';
+  }
   
   // Inteligentna analiza kontekstu i intencji
   function analyzeIntent(text) {
@@ -553,108 +616,130 @@ function aiReply(message) {
     // Analiza emocji i intencji
     const intent = {
       isGreeting: hasAnyWord(['hej', 'siema', 'cześć', 'witam', 'elo', 'dzień dobry', 'dzien dobry', 'good morning']),
-      isGoodbye: hasAnyWord(['dobranoc', 'good night', 'pa', 'żegnam']),
-      isLove: hasAnyWord(['kocham', 'kochanie', 'missie', 'uwielbiam', 'lubie']),
-      isQuestion: hasAnyWord(['?', 'czy', 'jak', 'co', 'gdzie', 'kiedy', 'dlaczego', 'ile']),
-      isPain: hasAnyWord(['boli', 'ból', 'ból', 'chory', 'choroba', 'złe', 'źle']),
-      isHunger: hasAnyWord(['głód', 'glodny', 'głodny', 'jeść', 'jem', 'chce jeść', 'jedzenie']),
-      isThirst: hasAnyWord(['pić', 'pragnie', 'spragniony', 'woda', 'napój']),
-      isPlay: hasAnyWord(['zabawa', 'bawić', 'pobawić', 'nuda', 'nudno', 'grać']),
-      isFood: hasAnyWord(['jedzenie', 'jeść', 'przepis', 'gotować', 'kanapka', 'pizza', 'obiad']),
-      isMood: hasAnyWord(['mood', 'nastroj', 'samopoczucie', 'czujesz', 'masz się']),
-      isLocation: hasAnyWord(['gdzie', 'lokalizacja', 'miejsce', 'pozycja']),
-      isActivity: hasAnyWord(['robisz', 'co robisz', 'działanie', 'aktualność']),
-      isMedia: hasAnyWord(['film', 'muzyka', 'piosenka', 'książka', 'serial']),
-      isHealth: hasAnyWord(['zdrowie', 'zdrowy', 'choroba', 'leczenie', 'medycyna']),
-      isCleaning: hasAnyWord(['czystość', 'brudny', 'myć', 'sprzątać', 'umyć']),
-      isReligion: hasAnyWord(['bóg', 'modlić', 'religia', 'wiara', 'modlitwa']),
-      isMoney: hasAnyWord(['pieniądze', 'monety', 'coins', 'kasa', 'hajs']),
-      isAge: hasAnyWord(['wiek', 'lat', 'stary', 'młody', 'urodziny']),
-      isTime: hasAnyWord(['czas', 'godzina', 'termin', 'kiedy', 'pora']),
-      isHelp: hasAnyWord(['pomoc', 'help', 'pomóż', 'instrukcja', 'jak'])
+      isGoodbye: hasAnyWord(['dobranoc', 'good night', 'pa', 'żegnam', 'nara']),
+      isLove: hasAnyWord(['kocham', 'kochanie', 'missie', 'uwielbiam', 'lubie', 'bardzo lubie']),
+      isQuestion: hasAnyWord(['?', 'czy', 'jak', 'co', 'gdzie', 'kiedy', 'dlaczego', 'ile', 'po co']),
+      isPain: hasAnyWord(['boli', 'ból', 'ból', 'chory', 'choroba', 'złe', 'źle', 'boleść']),
+      isHunger: hasAnyWord(['głód', 'glodny', 'głodny', 'jeść', 'jem', 'chce jeść', 'jedzenie', 'głodny']),
+      isThirst: hasAnyWord(['pić', 'pragnie', 'spragniony', 'woda', 'napój', 'chce pić']),
+      isPlay: hasAnyWord(['zabawa', 'bawić', 'pobawić', 'nuda', 'nudno', 'grać', 'pobawmy']),
+      isFood: hasAnyWord(['jedzenie', 'jeść', 'przepis', 'gotować', 'kanapka', 'pizza', 'obiad', 'kolacja']),
+      isMood: hasAnyWord(['mood', 'nastroj', 'samopoczucie', 'czujesz', 'masz się', 'samopoczucie']),
+      isLocation: hasAnyWord(['gdzie', 'lokalizacja', 'miejsce', 'pozycja', 'jesteś']),
+      isActivity: hasAnyWord(['robisz', 'co robisz', 'działanie', 'aktualność', 'co się dzieje']),
+      isMedia: hasAnyWord(['film', 'muzyka', 'piosenka', 'książka', 'serial', 'oglądać']),
+      isHealth: hasAnyWord(['zdrowie', 'zdrowy', 'choroba', 'leczenie', 'medycyna', 'leczyć']),
+      isCleaning: hasAnyWord(['czystość', 'brudny', 'myć', 'sprzątać', 'umyć', 'czyścić']),
+      isReligion: hasAnyWord(['bóg', 'modlić', 'religia', 'wiara', 'modlitwa', 'kościół']),
+      isMoney: hasAnyWord(['pieniądze', 'monety', 'coins', 'kasa', 'hajs', 'pieniądze']),
+      isAge: hasAnyWord(['wiek', 'lat', 'stary', 'młody', 'urodziny', 'ile masz']),
+      isTime: hasAnyWord(['czas', 'godzina', 'termin', 'kiedy', 'pora', 'która godzina']),
+      isHelp: hasAnyWord(['pomoc', 'help', 'pomóż', 'instrukcja', 'jak', 'nauka'])
     };
     
     return intent;
   }
   
-  // Inteligentne generowanie odpowiedzi na podstawie intencji
-  function generateResponse(text, intent) {
-    const words = text.split(/\s+/);
-    const hasWord = (word) => words.includes(word);
-    const hasAnyWord = (wordList) => wordList.some(word => hasWord(word));
+  // Dynamiczne generowanie odpowiedzi z kontekstem i emocjami
+  function generateResponse(text, intent, emotion, tone) {
     const responses = [];
+    const misiMood = getMisiMoodFromStats();
+    const userTrust = memory.trustLevel;
     
+    // Dynamiczne odpowiedzi zależne od statystyk Misia
     if (intent.isGreeting) {
-      responses.push("🐻 Misi się cieszy!");
+      if (data.pet.happiness < 30) {
+        responses.push("🐻 Misi westchnął cicho... cześć...");
+      } else if (data.pet.hunger < 30) {
+        responses.push("🐻 Misi mruczy cicho... ale myśli o jedzeniu! 🍗");
+      } else {
+        responses.push("🐻 Misi się cieszy! " + getMisiEmotion());
+      }
     }
     
     if (intent.isLove) {
-      responses.push("🐻 Misi też ❤️");
+      if (emotion === 'joy') {
+        responses.push("🐻 Misi czuje twoją radość i przytula cię! 🤗❤️");
+      } else if (userTrust > 70) {
+        responses.push("🐻 Misi kocha cię z całego serca! 💕");
+      } else {
+        responses.push("🐻 Misi też ❤️");
+      }
     }
     
     if (intent.isGoodbye) {
-      responses.push("🐻 Dobranoc! 🌙");
+      if (data.pet.happiness < 40) {
+        responses.push("🐻 Misi smutnie macha łapką... do zobaczenia 🌙");
+      } else {
+        responses.push("🐻 Misi mruczy na sen! Dobranoc! 🌙");
+      }
     }
     
     if (intent.isPain) {
       const bodyParts = [
-        "🐻 Misi boli głowa... 🤕",
-        "🐻 Misi boli brzuszek... 🤢", 
-        "🐻 Misi boli nóżka... 🦵",
-        "🐻 Misi boli łapka... 🐾",
-        "🐻 Misi boli ogonek... 🐕",
-        "🐻 Misi boli uszko... 👂",
-        "🐻 Misi boli nosek... 👃",
-        "🐻 Misi boli oczko... 👁️",
-        "🐻 Misi boli serduszko... ❤️",
-        "🐻 Misi boli kręgosłup... 🦴",
-        "🐻 Misi boli gardło... 😷",
-        "🐻 Misi boli wszystko... 💀",
+        "🐻 Misi boli głowa... 🤕", "🐻 Misi boli brzuszek... 🤢", 
+        "🐻 Misi boli nóżka... 🦵", "🐻 Misi boli łapka... 🐾",
+        "🐻 Misi boli ogonek... 🐕", "🐻 Misi boli uszko... 👂",
+        "🐻 Misi boli nosek... 👃", "🐻 Misi boli oczko... 👁️",
+        "🐻 Misi boli serduszko... ❤️", "🐻 Misi boli kręgosłup... 🦴",
+        "🐻 Misi boli gardło... 😷", "🐻 Misi boli wszystko... 💀",
         "🐻 Że Rychu Peja ma szanse uczciwie zarobić! 🎤💰"
       ];
-      responses.push(bodyParts[Math.floor(Math.random() * bodyParts.length)]);
+      if (data.pet.health < 30) {
+        responses.push("🐻 Misi i tak już wszystko boli... ale dodatkowo " + bodyParts[Math.floor(Math.random() * bodyParts.length)].substring(8));
+      } else {
+        responses.push(bodyParts[Math.floor(Math.random() * bodyParts.length)]);
+      }
     }
     
     if (intent.isHunger) {
-      responses.push("🐻 Misi chce jeść 🍗");
+      if (data.pet.hunger < 20) {
+        responses.push("🐻 Misi umiera z głodu! 🍗🍗🍗 Pomóż!");
+      } else if (data.pet.hunger < 50) {
+        responses.push("🐻 Misi bardzo coś zjadłby teraz... 🍖");
+      } else {
+        responses.push("🐻 Misi zawsze ma miejsce na coś dobrego! 🍗");
+      }
     }
     
     if (intent.isThirst) {
-      responses.push("🐻 Misi chce pić! 💧");
+      if (data.pet.hunger < 30) {
+        responses.push("🐻 Misi jest spragniony i głodny... 💧🍗");
+      } else {
+        responses.push("🐻 Misi chce pić! 💧");
+      }
     }
     
     if (intent.isPlay) {
-      responses.push("🐻 Pobaw się ze mną 🎾");
-    }
-    
-    if (intent.isFood) {
-      if (text.includes('przepis') || text.includes('jak zrobić')) {
-        responses.push("🐻 Oto przepis na pierogi Misia:\n🥟 Składniki: mąka, woda, ser, ziemniaki\n👨‍🍳 Przygotuj ciasto i farsz\n🥟 Gotuj przez 15 minut\n🍽 Smacznego!");
+      if (data.pet.happiness < 30) {
+        responses.push("🐻 Misi jest zbyt smutny na zabawę... 🌧️");
+      } else if (data.pet.happiness > 70) {
+        responses.push("🐻 TAK! Zabawa! Misi czuje energię! 🎾⚡");
       } else {
-        responses.push("🐻 Misi lubi: 🍯 miód, 🍎 jabłka, 🥨 chrupki!");
+        responses.push("🐻 Pobaw się ze mną! �");
       }
     }
     
     if (intent.isMood || (intent.isQuestion && hasAnyWord(['jak', 'masz']))) {
-      responses.push("🐻 Misi czuje się " + (data.pet.happiness > 70 ? 'świetnie! 😊' : data.pet.happiness > 40 ? 'dobrze 😐' : 'słabo 😟'));
+      responses.push("🐻 Misi czuje się " + misiMood);
     }
     
     if (intent.isLocation) {
-      responses.push("🐻 Misi jest tutaj! Z tobą! 🐻");
+      responses.push("🐻 Misi jest tutaj! Z tobą! " + getMisiEmotion());
     }
     
     if (intent.isActivity) {
-      responses.push("🐻 Misi myśli o życiu... 🤔");
-    }
-    
-    if (intent.isMedia) {
-      if (text.includes('film')) responses.push("🐻 Misi chce oglądać film! 🎬🍿");
-      else if (text.includes('muzyka') || text.includes('piosenka')) responses.push("🐻 Misi tańczy! 🎵💃🕺");
-      else if (text.includes('książka')) responses.push("🐻 Misi słucha bajki! 📖📚");
+      if (data.pet.hunger < 30) {
+        responses.push("🐻 Misi myśli o jedzeniu... 🍗");
+      } else if (data.pet.happiness < 30) {
+        responses.push("🐻 Misi myśli o smutku... 😔");
+      } else {
+        responses.push("🐻 Misi myśli o życiu... " + getMisiEmotion());
+      }
     }
     
     if (intent.isAge) {
-      responses.push("🐻 Misi jest wiecznie młody! 🐻‍♂️");
+      responses.push("🐻 Misi jest wiecznie młody! " + getMisiEmotion());
     }
     
     if (intent.isHelp) {
@@ -668,23 +753,70 @@ function aiReply(message) {
     
     // Inteligentne domyślanie się na podstawie kontekstu
     if (text.length < 20 && intent.isQuestion) {
-      // Krótkie pytania - domyśl się o co chodzi
       if (hasAnyWord(['co'])) {
-        if (hasAnyWord(['robisz', 'dzieje'])) return "🐻 Misi myśli o życiu... 🤔";
-        if (hasAnyWord(['u', 'ciebie'])) return "🐻 Misi czuje się " + (data.pet.happiness > 70 ? 'świetnie! 😊' : data.pet.happiness > 40 ? 'dobrze 😐' : 'słabo 😟');
+        if (hasAnyWord(['robisz', 'dzieje'])) return "🐻 Misi myśli o życiu... " + getMisiEmotion();
+        if (hasAnyWord(['u', 'ciebie'])) return "🐻 Misi czuje się " + misiMood;
       }
       if (hasAnyWord(['jak'])) {
-        if (hasAnyWord(['masz', 'sie'])) return "🐻 Misi czuje się " + (data.pet.happiness > 70 ? 'świetnie! 😊' : data.pet.happiness > 40 ? 'dobrze 😐' : 'słabo 😟');
+        if (hasAnyWord(['masz', 'sie'])) return "🐻 Misi czuje się " + misiMood;
       }
     }
     
     return null;
   }
   
+  // Funkcje pomocnicze dla dynamicznych odpowiedzi
+  function getMisiMoodFromStats() {
+    if (data.pet.happiness > 70 && data.pet.hunger > 50 && data.pet.health > 50) return 'great';
+    if (data.pet.happiness > 40 && data.pet.hunger > 30 && data.pet.health > 30) return 'good';
+    if (data.pet.happiness < 20 || data.pet.hunger < 20 || data.pet.health < 20) return 'terrible';
+    return 'okay';
+  }
+  
+  function getMisiEmotion() {
+    const mood = getMisiMoodFromStats();
+    const emotions = {
+      great: ['�', '🎉', '✨', '⭐', '🌟'],
+      good: ['🙂', '😌', '👍', '😊', '🐻'],
+      okay: ['😐', '🤔', '😑', '🐻', '�'],
+      terrible: ['😢', '💔', '😭', '💀', '🌧️']
+    };
+    const emotionList = emotions[mood] || emotions.okay;
+    return emotionList[Math.floor(Math.random() * emotionList.length)];
+  }
+  
+  // Analiza zaawansowana
   const intent = analyzeIntent(t);
-  const intelligentResponse = generateResponse(t, intent);
+  const emotion = analyzeEmotion(t);
+  const tone = analyzeTone(t);
+  
+  // Aktualizuj emocje użytkownika w pamięci
+  memory.emotions.push({
+    emotion: emotion,
+    tone: tone,
+    timestamp: Date.now()
+  });
+  
+  // Zachowaj tylko ostatnie 10 emocji
+  if (memory.emotions.length > 10) {
+    memory.emotions = memory.emotions.slice(-10);
+  }
+  
+  // Aktualizuj poziom zaufania na podstawie tonu
+  if (tone === 'vulgar') {
+    memory.trustLevel = Math.max(0, memory.trustLevel - 5);
+  } else if (tone === 'formal') {
+    memory.trustLevel = Math.min(100, memory.trustLevel + 2);
+  } else if (emotion === 'love') {
+    memory.trustLevel = Math.min(100, memory.trustLevel + 3);
+  }
+  
+  // Generuj odpowiedzi z nowym systemem
+  const intelligentResponse = generateResponse(t, intent, emotion, tone);
   
   if (intelligentResponse) {
+    // Zapisz zmiany w pamięci
+    safeSave();
     return message.reply(intelligentResponse);
   }
 
