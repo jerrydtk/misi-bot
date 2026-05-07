@@ -1775,10 +1775,10 @@ function checkCriticalStates(channel) {
 }
 
 const STAT_DECAY_PER_MINUTE = {
-  hunger: 100 / 3600,
-  happiness: 100 / 1800,
-  cleanliness: 100 / 3600,
-  health: 100 / 3600
+  hunger: 100 / 960,      // 16 godzin na 100 punktów
+  happiness: 100 / 960,   // 16 godzin na 100 punktów  
+  cleanliness: 100 / 960, // 16 godzin na 100 punktów
+  health: 100 / 960       // 16 godzin na 100 punktów
 };
 const RELIGION_DECAY_PER_MINUTE = 100 / (72 * 60); // 72 hours
 const ANGER_THRESHOLD = 40;
