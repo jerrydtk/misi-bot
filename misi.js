@@ -1739,7 +1739,7 @@ client.on('messageCreate', async (message) => {
 
   // 🎮 USE
   if (message.content.startsWith('!use')) {
-    const item = message.content.split(' ')[1];
+    const item = message.content.slice(5).trim(); // Weź wszystko po "!use "
     const u = data.users[userId];
 
     const foundItem = findShopItem(item);
@@ -1753,6 +1753,29 @@ client.on('messageCreate', async (message) => {
     if (!cooldownCheck.ok) return message.reply(cooldownCheck.msg);
 
     u.inventory[actualName]--;
+    
+    // Special handling for pack items (like paczka papierosów)
+    if (shopItem.packFor) {
+      // Add packAmount items to inventory
+      u.inventory[shopItem.packFor] = (u.inventory[shopItem.packFor] || 0) + shopItem.packAmount;
+      
+      clampPet();
+      u.itemCooldowns[actualName].push(Date.now());
+      safeSave();
+      
+      return message.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle(`🎮 ${shopItem.emoji} Otworzyłeś ${actualName}!`)
+            .setDescription(`Otrzymałeś **${shopItem.packAmount}x ${shopItem.packFor}** do inventory!\n\n${getPetMood()}`)
+            .addFields(
+              { name: '🎁 Pozostało:', value: `${u.inventory[actualName]} sztuka(i)`, inline: false },
+              { name: `📦 Nowe przedmioty:`, value: `${u.inventory[shopItem.packFor]}x ${shopItem.packFor}`, inline: false }
+            )
+            .setColor(0x00ff00)
+        ]
+      });
+    }
     
     // Special handling for mystery box
     if (shopItem.type === 'mystery') {
