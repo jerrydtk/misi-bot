@@ -31,13 +31,13 @@ const SHOP = {
   'papier toaletowy': { emoji: '🧻', price: 12, type: 'hygiene', hunger: 0, happiness: 2, cleanliness: 15, maxUsePerHour: 4, cooldown: 45000 },
   'piłka': { emoji: '🎾', price: 30, type: 'toy', hunger: 0, happiness: 20, health: 0, maxUsePerHour: 1, cooldown: 300000 },
   'klocki': { emoji: '🧱', price: 45, type: 'toy', hunger: 0, happiness: 25, health: 0, maxUsePerHour: 1, cooldown: 300000 },
-  'lego': { emoji: '🧱', price: 55, type: 'toy', hunger: 0, happiness: 30, health: 0, maxUsePerHour: 1, cooldown: 300000 },
+  'lego': { emoji: '🧱', price: 65, type: 'toy', hunger: 0, happiness: 30, health: 0, maxUsePerHour: 1, cooldown: 300000 },
   'pluszak': { emoji: '🧸', price: 35, type: 'toy', hunger: 0, happiness: 20, health: 0, maxUsePerHour: 1, cooldown: 300000 },
   'samochodzik': { emoji: '🚗', price: 40, type: 'toy', hunger: 0, happiness: 22, health: 0, maxUsePerHour: 1, cooldown: 300000 },
-  'snusy': { emoji: '🟫', price: 40, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 10, maxUsePerHour: 2, cooldown: 60000 },
-  'e-fajka': { emoji: '🔋', price: 60, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 18, maxUsePerHour: 2, cooldown: 60000 },
-  'fajka': { emoji: '🚬', price: 20, type: 'drug', hunger: 0, happiness: 0, health: -2, angerReduce: 35, maxUsePerHour: 2, cooldown: 60000 },
-  'paczka Papierosów': { emoji: '📦', price: 180, type: 'drug', hunger: 0, happiness: 0, health: 0, packFor: 'fajka', packAmount: 10, maxUsePerHour: 1, cooldown: 60000 },
+  'snusy': { emoji: '🟫', price: 40, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 18, maxUsePerHour: 2, cooldown: 60000 },
+  'e-fajka': { emoji: '🔋', price: 60, type: 'drug', hunger: 0, happiness: 0, health: 0, angerReduce: 25, maxUsePerHour: 2, cooldown: 60000 },
+  'fajka': { emoji: '🚬', price: 25, type: 'drug', hunger: 0, happiness: 0, health: -5, angerReduce: 15, maxUsePerHour: 2, cooldown: 60000 },
+  'paczka Papierosów': { emoji: '📦', price: 225, type: 'drug', hunger: 0, happiness: 0, health: 0, packFor: 'fajka', packAmount: 10, maxUsePerHour: 1, cooldown: 60000 },
   'krucyfiks': { emoji: '✝️', price: 1500, type: 'religious', possessedRemove: true, maxUsePerHour: 1, cooldown: 60000 },
   'biblia': { emoji: '📖', price: 200, type: 'religious', religion: 15, maxUsePerHour: 2, cooldown: 120000 },
   'box': { emoji: '🎁', price: 250, type: 'mystery', hunger: 30, happiness: 30, health: 20, maxUsePerHour: 1, cooldown: 600000 }
@@ -268,7 +268,7 @@ function createStatusEmbed(userId) {
       { name: '🎯 Ogólny status', value: `${overallStatus}%`, inline: true },
       { name: '⏰ Ostatnia akcja', value: getLastAction(userId), inline: true }
     )
-    .setFooter({ text: 'Użyj przycisków poniżej lub komend !feed, !play, !clean, !heal', iconURL: client.user.displayAvatarURL() })
+    .setFooter({ text: 'Użyj komend !feed, !play, !clean, !heal', iconURL: client.user.displayAvatarURL() })
     .setTimestamp();
 }
 
@@ -426,7 +426,7 @@ function checkDeath(channel) {
           embeds: [
             new EmbedBuilder()
               .setTitle("💀 MISI ZMARŁ")
-              .setDescription("Nikt nie zareagował na czas i Misi zmarł. Nie umiesz dbać o Misia.\n\nMożesz adoptować nowego Misia za 24 godzin komendą `!adopt`.")
+              .setDescription("Nikt nie zareagował na czas i Misi zmarł. Nie umiesz dbać o Misia.\n\nMożesz adoptować nowego Misia za 6 godzin komendą `!adopt`.")
               .setColor(0xff0000)
               .setTimestamp()
           ]
@@ -1114,8 +1114,8 @@ client.on('messageCreate', async (message) => {
   if (message.content === '!help') {
     return message.reply(`🐻 **Misi Bot - Komendy:**
 
-� **Status i Statystyki:**
-�� !status - sprawdź status Misia i swoje statystyki
+🐻 **Status i Statystyki:**
+🐻 !status - sprawdź status Misia i swoje statystyki
 💰 !coins - sprawdź swoje monety i XP
 🎒 !inv - sprawdź swoje inventory
 📅 !dni - sprawdź ile dni Misi żyje
@@ -1124,10 +1124,10 @@ client.on('messageCreate', async (message) => {
 🛒 !shop - zobacz wszystkie dostępne przedmioty
 🛍 !buy <przedmiot> - kup przedmiot za monety
 
-� **Przedmioty:**
+🎮 **Przedmioty:**
 🎮 !use <przedmiot> - użyj przedmiot z inventory
 
-�� **Opieka nad Misim:**
+🐻 **Opieka nad Misim:**
 🍗 !feed - nakarm Misia (5-20 monet + bonus levelowy, 5 XP)
 🎾 !play - baw się z Misiem (5-20 monet + bonus levelowy, 5 XP)
 🧼 !clean - umyj Misia (5-20 monet + bonus levelowy, 5 XP)
@@ -1145,10 +1145,10 @@ client.on('messageCreate', async (message) => {
 💰 **Interakcje:**
 💝 !gift @user kwota - wyślij monety innemu użytkownikowi
 
-� **Wróżenie i Zabawa:**
+🔮 **Wróżenie i Zabawa:**
 🔮 !kula [pytanie] - zapytaj Magiczną Kulę Misia o odpowiedź
 
-�� **Admin:**
+🚨 **Admin:**
 🚨 !restore - przywróć Misia do życia (emergency)
 🔫 !kill - zabij Misia (admin only)
 
@@ -1176,6 +1176,28 @@ client.on('messageCreate', async (message) => {
     return message.reply(`💰 ${data.users[userId].coins}`);
   }
 
+  if (message.content === '!lvl') {
+    const u = data.users[userId];
+    const xpNeeded = 150;
+    const xpProgress = u.xp;
+    const xpToNext = xpNeeded - xpProgress;
+    
+    return message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('🏆 TWÓJ POZIOM')
+          .setDescription(`**Level:** ${u.level}\n**XP:** ${xpProgress}/${xpNeeded}\n**Do następnego levela:** ${xpToNext} XP`)
+          .addFields(
+            { name: '📈 Postęp', value: `[${'█'.repeat(Math.floor(xpProgress / 15))}${'░'.repeat(10 - Math.floor(xpProgress / 15))}] ${Math.round((xpProgress / xpNeeded) * 100)}%`, inline: false },
+            { name: '💰 Monety', value: `${u.coins}`, inline: true },
+            { name: '⭐ Bonus monetowy', value: `+${getLevelBonus(u.level)} monet za akcje`, inline: true }
+          )
+          .setColor(0x00ff00)
+          .setTimestamp()
+      ]
+    });
+  }
+
   // 🍗 FEED - NOWA WERSJA Z ANTYSPAMEM
   if (message.content === '!feed') {
     if (data.pet.dead) {
@@ -1201,11 +1223,8 @@ client.on('messageCreate', async (message) => {
   const feedCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
   const levelBonus = getLevelBonus(data.users[userId].level); // bonus za level
   
-  data.users[userId].coins += feedCoins + levelBonus;
-  data.users[userId].xp += 5;
+  reward(userId, feedCoins + levelBonus, 5, message);
   data.users[userId].lastFeed = now; // zapisz czas karmienia
-
-  safeSave();
 
   return message.reply({
     embeds: [
@@ -1258,10 +1277,8 @@ client.on('messageCreate', async (message) => {
   const playCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
   const levelBonus = getLevelBonus(data.users[userId].level); // bonus za level
   
-  data.users[userId].coins += playCoins + levelBonus;
-  data.users[userId].xp += 5;
-
-  safeSave();
+  reward(userId, playCoins + levelBonus, 5, message);
+  data.users[userId].lastPlay = Date.now();
 
   return message.reply({
     embeds: [
@@ -1270,7 +1287,7 @@ client.on('messageCreate', async (message) => {
         .setDescription(`**Szczęście:** ${Math.round(playBefore)} → ${Math.round(data.pet.happiness)}\n**Otrzymano:** 💰 ${playCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Szczęście", value: bar(data.pet.happiness), inline: false },
-          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/150`, inline: true },
           { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.happiness > 70 ? 0x00ff00 : data.pet.happiness > 40 ? 0xffff00 : 0xff0000)
@@ -1308,11 +1325,8 @@ client.on('messageCreate', async (message) => {
   const cleanCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
   const levelBonus = getLevelBonus(data.users[userId].level); // bonus za level
 
-  data.users[userId].coins += cleanCoins + levelBonus;
-  data.users[userId].xp += 5;
+  reward(userId, cleanCoins + levelBonus, 5, message);
   data.users[userId].lastClean = now; // zapisz czas czyszczenia
-
-  safeSave();
 
   return message.reply({
     embeds: [
@@ -1321,7 +1335,7 @@ client.on('messageCreate', async (message) => {
         .setDescription(`**Czystość:** ${Math.round(cleanBefore)} → ${Math.round(data.pet.cleanliness)}\n**Otrzymano:** 💰 ${cleanCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Czystość", value: bar(data.pet.cleanliness), inline: false },
-          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/150`, inline: true },
           { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.cleanliness > 70 ? 0x00ff00 : data.pet.cleanliness > 40 ? 0xffff00 : 0xff0000)
@@ -1359,11 +1373,8 @@ client.on('messageCreate', async (message) => {
   const healCoins = Math.floor(Math.random() * 16) + 5; // 5-20 monet
   const levelBonus = getLevelBonus(data.users[userId].level); // bonus za level
   
-  data.users[userId].coins += healCoins + levelBonus;
-  data.users[userId].xp += 5;
+  reward(userId, healCoins + levelBonus, 5, message);
   data.users[userId].lastHeal = now; // zapisz czas leczenia
-
-  safeSave();
 
   return message.reply({
     embeds: [
@@ -1372,7 +1383,7 @@ client.on('messageCreate', async (message) => {
         .setDescription(`**Zdrowie:** ${Math.round(healBefore)} → ${Math.round(data.pet.health)}\n**Otrzymano:** 💰 ${healCoins} monet${levelBonus > 0 ? ` + bonus ${levelBonus} za level!` : ''}, 📈 5 XP\n\n${getPetMood()}`)
         .addFields(
           { name: "Zdrowie", value: bar(data.pet.health), inline: false },
-          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/${(data.users[userId].level + 1) * 50}`, inline: true },
+          { name: "📈 Twoje XP", value: `${data.users[userId].xp}/150`, inline: true },
           { name: "💰 Twoje monety", value: `${data.users[userId].coins}`, inline: true }
         )
         .setColor(data.pet.health > 70 ? 0x00ff00 : data.pet.health > 40 ? 0xffff00 : 0xff0000)
@@ -1467,12 +1478,12 @@ client.on('messageCreate', async (message) => {
   }
   // 🧾 TACA
   if (message.content === '!taca') {
-    const cd = canUse(userId, 'taca', 43200000);
-    if (!cd.ok) return message.reply(cd.msg);
-
     if (data.pet.religion <= 80) {
       return message.reply('🛑 Religia musi być powyżej 80, żeby wysłać z tacą');
     }
+
+    const cd = canUse(userId, 'taca', 43200000);
+    if (!cd.ok) return message.reply(cd.msg);
 
     const coins = Math.floor(Math.random() * 51);
     if (coins > 0) {
@@ -1627,7 +1638,7 @@ client.on('messageCreate', async (message) => {
 
   // 🛍 BUY
   if (message.content.startsWith('!buy')) {
-    const item = message.content.split(' ')[1];
+    const item = message.content.slice(5).trim(); // Weź wszystko po "!buy "
     const u = data.users[userId];
 
     const foundItem = findShopItem(item);
@@ -1699,7 +1710,7 @@ client.on('messageCreate', async (message) => {
       "🐻 Misi nie jest pewien... 🤔",
       "🐻 Znaki wskazują na tak! ✨",
       "🐻 Znaki wskazują na nie! 🌑",
-      "🐻 Skup się i zapytaj ponownie!",
+      "🐻 Poczekaj musze sprawdzić!",
       "🐻 Misi mówi tak! 🐻",
       "🐻 Misi mówi nie! 🐻",
       "🐻 Oczywiście, że tak! 😊",
@@ -1718,7 +1729,7 @@ client.on('messageCreate', async (message) => {
           .setColor(0x9966ff)
           .setThumbnail('https://cdn.discordapp.com/attachments/1234567890/1234567890/magic8ball.gif')
           .addFields(
-            { name: "🐻 Misi radzi:", value: "Zaufaj mocy Magicznej Kuli Misia!", inline: false }
+            { name: "🐻 Misi radzi:", value: "Misi kula nigdy się nie myli!", inline: false }
           )
           .setFooter({ text: `Pytanie zadane przez ${message.author.username}`, iconURL: message.author.displayAvatarURL() })
           .setTimestamp()
@@ -1894,7 +1905,7 @@ function checkCriticalStates(channel) {
             .setDescription(alert.description)
             .addFields(
               { name: "🐻 Status Misiego", value: petStatus(), inline: false },
-              { name: "⏰ Czas na reakcję", value: "5 minut", inline: true }
+              { name: "⏰ Czas na reakcję", value: "10 minut", inline: true }
             )
             .setColor(alert.color)
             .setTimestamp()
