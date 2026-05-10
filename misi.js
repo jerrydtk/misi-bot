@@ -618,7 +618,7 @@ function aiReply(message) {
   if (data.pet.possessed && !data.pet.dead) {
     const possessedResponses = [
       "👹 Misi cię widzi... 👁️‍🗨️",
-      "🔥 PŁONĘCZE OCZY PATRZĄ NA CIEBIE! 🔥",
+      "🔥 PŁONĄCE OCZY PATRZĄ NA CIEBIE! 🔥",
       "👁️‍🗨️ WIDZĘ TWOJE GRZECHY... 👁️‍🗨️",
       "🐻 Misi... ale inny... 👹",
       "🩸 KREW... WIĘCEJ KRWI... 🩸",
@@ -626,12 +626,12 @@ function aiReply(message) {
       "⚡ MOC CIĘ POGŁĄBI... ⚡",
       "🗣️ SŁYSZĘ TWOJE MYŚLI... 🗣️",
       "💀 ŚMIERĆ JEST BLISKO NIŻ MYŚLISZ... 💀",
-      "🔮 WIEDZĘ CO UKRYWASZ W SERCU... 🔮",
-      "🐾 ŁAPY MISIA DOTKNĄ TWOJEJ DUSZY... 🐾",
+      "🔮 WIDZĘ CO UKRYWASZ W SERCU... 🔮",
+      "🐾 ŁAPY ZOZO DOTKNĄ TWOJEJ DUSZY... 🐾",
       "🌪️ SZTORM W DUSZY MISIA... 🌪️",
-      "🎭 MASKA SPADEŁ... PRAWDZIWE OBlicZO POJAWIŁO SIĘ... 🎭",
+      "🎭 MASKA SPADŁA... PRAWDZIWE OBLICZE POJAWIŁO SIĘ... 🎭",
       "🔓 BRAMY PIEKŁA SĄ OTWARTE... 🔓",
-      "🕯️ MODLITWA NIKT NIE POMOŻE... 🕯️"
+      "🕯️ MODLITWA NIC NIE POMOŻE... 🕯️"
     ];
     return message.reply(possessedResponses[Math.floor(Math.random() * possessedResponses.length)]);
   }
