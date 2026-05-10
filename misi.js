@@ -545,6 +545,28 @@ function aiReply(message) {
   const t = message.content.toLowerCase();
   const userId = message.author.id;
   
+  // 👹 POSSESSED AI RESPONSES
+  if (data.pet.possessed && !data.pet.dead) {
+    const possessedResponses = [
+      "👹 Misi cię widzi... 👁️‍🗨️",
+      "🔥 PŁONĘCZE OCZY PATRZĄ NA CIEBIE! 🔥",
+      "👁️‍🗨️ WIDZĘ TWOJE GRZECHY... 👁️‍🗨️",
+      "🐻 Misi... ale inny... 👹",
+      "🩸 KREW... WIĘCEJ KRWI... 🩸",
+      "🌑 CIEMNOŚĆ ROZSIERA SIĘ... 🌑",
+      "⚡ MOC CIĘ POGŁĄBI... ⚡",
+      "🗣️ SŁYSZĘ TWOJE MYŚLI... 🗣️",
+      "💀 ŚMIERĆ JEST BLISKO NIŻ MYŚLISZ... 💀",
+      "🔮 WIEDZĘ CO UKRYWASZ W SERCU... 🔮",
+      "🐾 ŁAPY MISIA DOTKNĄ TWOJEJ DUSZY... 🐾",
+      "🌪️ SZTORM W DUSZY MISIA... 🌪️",
+      "🎭 MASKA SPADEŁ... PRAWDZIWE OBlicZO POJAWIŁO SIĘ... 🎭",
+      "🔓 BRAMY PIEKŁA SĄ OTWARTE... 🔓",
+      "🕯️ MODLITWA NIKT NIE POMOŻE... 🕯️"
+    ];
+    return message.reply(possessedResponses[Math.floor(Math.random() * possessedResponses.length)]);
+  }
+  
   // Inicjalizacja pamięci konwersacji dla użytkownika
   if (!data.conversationMemory) data.conversationMemory = {};
   if (!data.conversationMemory[userId]) {
@@ -1041,7 +1063,77 @@ client.on('messageCreate', async (message) => {
     });
   }
 
-  // 🔫 ADMIN KILL COMMAND
+  // � ADMIN SET COMMAND
+  if (message.content.startsWith('!set')) {
+    if (userId !== ADMIN_ID) {
+      return message.reply("❌ Nie masz uprawnień do tej komendy!");
+    }
+
+    const args = message.content.split(' ');
+    
+    if (args.length === 1) {
+      return message.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle("🔧 ADMIN SET - Pomoc")
+            .setDescription("Użyj komendy `!set <statystyka> <wartość>` aby ustawić statystyki Misia.")
+            .addFields(
+              { name: "📊 Dostępne statystyki", value: "`hunger` - Głód (0-100)\n`happiness` - Szczęście (0-100)\n`health` - Zdrowie (0-100)\n`cleanliness` - Czystość (0-100)\n`anger` - Złość (0-100)\n`religion` - Religia (0-100)", inline: false },
+              { name: "📝 Przykłady użycia", value: "`!set hunger 75`\n`!set happiness 100`\n`!set health 50`\n`!set anger 0`\n`!set religion 25`", inline: false },
+              { name: "⚠️ Uwagi", value: "Wartości muszą być w zakresie 0-100.\nKomenda tylko dla admina!", inline: false }
+            )
+            .setColor(0x00ff00)
+            .setTimestamp()
+        ]
+      });
+    }
+
+    const statName = args[1]?.toLowerCase();
+    const value = parseInt(args[2]);
+
+    if (!statName || isNaN(value)) {
+      return message.reply("❌ Niepoprawne użycie! Użyj `!set <statystyka> <wartość>`");
+    }
+
+    if (value < 0 || value > 100) {
+      return message.reply("❌ Wartość musi być w zakresie 0-100!");
+    }
+
+    const validStats = {
+      'hunger': 'głód',
+      'happiness': 'szczęście',
+      'health': 'zdrowie',
+      'cleanliness': 'czystość',
+      'anger': 'złość',
+      'religion': 'religia'
+    };
+
+    if (!validStats[statName]) {
+      return message.reply(`❌ Niepoprawna statystyka! Dostępne: ${Object.keys(validStats).join(', ')}`);
+    }
+
+    const oldValue = data.pet[statName];
+    data.pet[statName] = value;
+    clampPet();
+    safeSave();
+
+    return message.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("🔧 ADMIN SET - Statystyka Zmieniona")
+          .setDescription(`Pomyślnie zmieniono statystykę Misia!`)
+          .addFields(
+            { name: "📊 Statystyka", value: `${validStats[statName]} (${statName})`, inline: true },
+            { name: "📉 Stara wartość", value: oldValue.toString(), inline: true },
+            { name: "📈 Nowa wartość", value: value.toString(), inline: true }
+          )
+          .setColor(0x00ff00)
+          .setTimestamp()
+      ]
+    });
+  }
+
+  // � ADMIN KILL COMMAND
   if (message.content === '!kill') {
     if (userId !== ADMIN_ID) {
       return message.reply("❌ Nie masz uprawnień do tej komendy!");
@@ -1971,6 +2063,42 @@ const RANDOM_EVENTS = [
   { title: 'Misi miał zły sen, poczuł silne zdenerwowanie i stracił apetyt.', positive: false, effects: { anger: 30, hunger: -15 } }
 ];
 
+// 👹 POSSESSED MESSAGE SYSTEM
+function sendPossessedMessage(channel) {
+  if (!data.pet.possessed || data.pet.dead) return;
+
+  const possessedMessages = [
+    "👹 **MISI JEST W TEJ CHWILI OBECNY...** 👁️‍🗨️",
+    "🔥 **PŁONĘCZE OCZY PATRZĄ NA WAS...** 🔥",
+    "🩸 **KREW... WIĘCEJ KRWI...** 🩸",
+    "👁️‍🗨️ **WIDZĘ WASZE GRZECHY...** 👁️‍🗨️",
+    "🐻 **MISI... ALE NIE TEN SAM...** 👹",
+    "🔮 **WIEDZĘ CO UKRYWASZ W SERCU...** 🔮",
+    "⚡ **MOC CIĘ POGŁĄBI...** ⚡",
+    "🌑 **CIEMNOŚĆ ROZSIERA SIĘ...** 🌑",
+    "🗣️ **SŁYSZĘ WASZE MYŚLI...** 🗣️",
+    "💀 **ŚMIERĆ JEST BLISKO NIŻ MYŚLISZ...** 💀",
+    "🕯️ **MODLITWA NIKT NIE POMOŻE...** 🕯️",
+    "🐾 **ŁAPY MISIA DOTKNĄ TWOJEJ DUSZY...** 🐾",
+    "🌪️ **SZTORM W DUSZY MISIA...** 🌪️",
+    "🎭 **MASKA SPADEŁ... PRAWDZIWE OBlicZO POJAWIŁO SIĘ...** 🎭",
+    "🔓 **BRAMY PIEKŁA SĄ OTWARTE...** 🔓"
+  ];
+
+  const randomMessage = possessedMessages[Math.floor(Math.random() * possessedMessages.length)];
+  
+  channel.send({
+    embeds: [
+      new EmbedBuilder()
+        .setTitle("👹 OPĘTANY MISI")
+        .setDescription(randomMessage)
+        .setColor(0x8b0000) // Dark red color
+        .setTimestamp()
+        .setFooter({ text: "Misi nie sobą jest..." })
+    ]
+  });
+}
+
 function triggerRandomEvent(channel) {
   if (data.pet.dead) return;
 
@@ -2048,9 +2176,9 @@ setInterval(() => {
       checkDeathDoorReminder(channel);
       checkDeath(channel);
       // Possessed messages
-      // if (data.pet.possessed && Math.random() < 0.1) { // ~10% chance per minute
-      //   sendPossessedMessage(channel);
-      // }
+      if (data.pet.possessed && Math.random() < 0.15) { // ~15% chance per minute (roughly every 5-10 minutes)
+        sendPossessedMessage(channel);
+      }
     }
   }
 }, 60000);
