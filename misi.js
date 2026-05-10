@@ -45,33 +45,102 @@ const SHOP = {
 
 // DATA
 let data;
-try {
-  data = JSON.parse(fs.readFileSync('data.json'));
-} catch {
-  data = {
-    pet: {
-      hunger: 50,
-      happiness: 50,
-      health: 100,
-      cleanliness: 100,
-      anger: 0,
-      religion: 100,
-      happinessLossSincePlay: 0,
-      lastPlayAt: Date.now(),
-      possessed: false,
-      dead: false,
-      deathTime: null,
-      zeroStatsTime: null,
-      deathDoorTime: null,
-      deathDoorReminderSent: false,
-      survivalDays: 0,
-      deathCount: 0,
-      adoptedAt: Date.now()
-    },
-    alerts: { hunger: false, happiness: false, health: false, cleanliness: false },
-    users: {}
-  };
+let userDataPreserved = false;
+
+function loadData() {
+  try {
+    // Try to load main data file
+    if (fs.existsSync('data.json')) {
+      const fileData = fs.readFileSync('data.json');
+      const parsedData = JSON.parse(fileData);
+      
+      // Check if users data exists and is not empty
+      if (parsedData.users && Object.keys(parsedData.users).length > 0) {
+        console.log('✅ Loaded existing data with users preserved');
+        return parsedData;
+      }
+    }
+    
+    // Try to load from backup files if main data is empty or doesn't exist
+    const backupFiles = fs.readdirSync('.').filter(file => 
+      file.startsWith('data.backup.') && file.endsWith('.json')
+    );
+    
+    if (backupFiles.length > 0) {
+      // Sort by timestamp to get the latest backup
+      backupFiles.sort((a, b) => {
+        const timeA = parseInt(a.split('.')[2]);
+        const timeB = parseInt(b.split('.')[2]);
+        return timeB - timeA;
+      });
+      
+      const latestBackup = backupFiles[0];
+      console.log(`🔄 Loading data from backup: ${latestBackup}`);
+      const backupData = JSON.parse(fs.readFileSync(latestBackup, 'utf8'));
+      
+      if (backupData.users && Object.keys(backupData.users).length > 0) {
+        userDataPreserved = true;
+        console.log('✅ User data preserved from backup');
+        return backupData;
+      }
+    }
+    
+    // If no valid data found, create new structure
+    console.log('🆕 Creating new data structure');
+    return {
+      pet: {
+        hunger: 50,
+        happiness: 50,
+        health: 100,
+        cleanliness: 100,
+        anger: 0,
+        religion: 100,
+        happinessLossSincePlay: 0,
+        lastPlayAt: Date.now(),
+        possessed: false,
+        dead: false,
+        deathTime: null,
+        zeroStatsTime: null,
+        deathDoorTime: null,
+        deathDoorReminderSent: false,
+        survivalDays: 0,
+        deathCount: 0,
+        adoptedAt: Date.now()
+      },
+      alerts: { hunger: false, happiness: false, health: false, cleanliness: false },
+      users: {}
+    };
+    
+  } catch (error) {
+    console.error('❌ Error loading data:', error.message);
+    // Fallback to empty structure
+    return {
+      pet: {
+        hunger: 50,
+        happiness: 50,
+        health: 100,
+        cleanliness: 100,
+        anger: 0,
+        religion: 100,
+        happinessLossSincePlay: 0,
+        lastPlayAt: Date.now(),
+        possessed: false,
+        dead: false,
+        deathTime: null,
+        zeroStatsTime: null,
+        deathDoorTime: null,
+        deathDoorReminderSent: false,
+        survivalDays: 0,
+        deathCount: 0,
+        adoptedAt: Date.now()
+      },
+      alerts: { hunger: false, happiness: false, health: false, cleanliness: false },
+      users: {}
+    };
+  }
 }
+
+data = loadData();
 // Ensure alerts object exists (for existing data.json files)
 if (!data.alerts) {
   data.alerts = { hunger: false, happiness: false, health: false, cleanliness: false };
