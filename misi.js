@@ -2163,7 +2163,7 @@ function sendPossessedMessage(channel) {
         .setDescription(randomMessage)
         .setColor(0x8b0000) // Dark red color
         .setTimestamp()
-        .setFooter({ text: "Misi nie sobą jest..." })
+        .setFooter({ text: "Misi nie jest sobą..." })
     ]
   });
 }
@@ -2227,12 +2227,11 @@ setInterval(() => {
     data.pet.religion = Math.min(100, data.pet.religion + RELIGION_RESTORE_PER_MINUTE);
   }
 
-  // Possession logic
+  // Possession logic - only triggered when religion drops below 30
   if (data.pet.religion < 30 && !data.pet.possessed) {
     data.pet.possessed = true;
-  } else if (data.pet.religion >= 30 && data.pet.possessed) {
-    data.pet.possessed = false;
   }
+  // Note: Possession can only be removed by using a crucifix (krucyfiks)
 
   clampPet();
   save();
